@@ -142,7 +142,7 @@
                         const end = document.createElement("th");
                         end.textContent = FULL(data.station[i].end);
                         const img = document.createElement("th");
-                        img.innerHTML = `<a style="color: white;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
+                        img.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
                         box.appendChild(ID);
                         box.appendChild(loc);
                         box.appendChild(x);
@@ -176,7 +176,7 @@
                         const id = Object.keys(data)[i];
                         const box = document.createElement("tr");
                         const no = document.createElement("th");
-                        no.innerHTML = `<a style="color: white;text-decoration:underline;cursor: pointer;" onclick="switch_mode(${i + 1})">${i + 1}</a>`;
+                        no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${i + 1}</a>`;
                         const time_release = document.createElement("th");
                         time_release.textContent = FULL(data.trem.eew[i].timestamp);
                         const type = document.createElement("th");
