@@ -334,7 +334,7 @@
                         depth.setAttribute("data-text", depth.textContent);
 
                         const scale = document.createElement("td");
-                        scale.textContent = `M ${data.trem.eew[i].scale}`;
+                        scale.textContent = `M ${data.trem.eew[i].scale.toFixed(1)}`;
                         scale.setAttribute("data-text", scale.textContent);
 
                         const max = document.createElement("td");

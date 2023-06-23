@@ -207,14 +207,14 @@
 
                         const no = document.createElement("td");
                         if (data[id].eq.no) {
-                            no.textContent = data[id].eq.no;
+                            no.textContent = (!data[id].eq.no.toString().includes("000")) ? data[id].eq.no : "小區域";
                             no.setAttribute("data-text", no.textContent);
                             if (!data[id].eq.no.toString().includes("000")) no.style.backgroundColor = "goldenrod";
                         }
 
                         const time = document.createElement("td");
                         if (data[id].eq.time) {
-                            time.textContent = timestamp(data[id].eq.time);
+                            time.textContent = timestamp(data[id].eq.time).replace(".000", "");
                             time.setAttribute("data-text", time.textContent);
                         }
 
@@ -241,7 +241,7 @@
 
                         const scale = document.createElement("td");
                         if (data[id].eq.scale) {
-                            scale.textContent = `M ${data[id].eq.scale}`;
+                            scale.textContent = `M ${data[id].eq.scale.toFixed(1)}`;
                             scale.setAttribute("data-text", scale.textContent);
                         }
 
