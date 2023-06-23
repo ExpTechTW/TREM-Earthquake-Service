@@ -195,6 +195,11 @@
                             time_eew.textContent = timestamp(data[id].eew);
                             time_eew.setAttribute("data-text", time_eew.textContent);
                         }
+                        if (data[id].error) {
+                            time_eew.textContent = "誤報";
+                            time_eew.colSpan = 11;
+                            time_eew.setAttribute("data-text", time_eew.textContent);
+                        }
 
                         const target = document.createElement("td");
                         target.textContent = data[id].target;
@@ -249,16 +254,18 @@
                         box.append(date);
                         box.appendChild(time_trem);
                         box.appendChild(time_eew);
-                        box.appendChild(target);
-                        box.appendChild(max);
-                        box.appendChild(no);
-                        box.appendChild(time);
-                        box.appendChild(loc);
-                        box.appendChild(lat);
-                        box.appendChild(lon);
-                        box.appendChild(depth);
-                        box.appendChild(scale);
-                        box.appendChild(replay);
+                        if (!data[id].error) {
+                            box.appendChild(target);
+                            box.appendChild(max);
+                            box.appendChild(no);
+                            box.appendChild(time);
+                            box.appendChild(loc);
+                            box.appendChild(lat);
+                            box.appendChild(lon);
+                            box.appendChild(depth);
+                            box.appendChild(scale);
+                            box.appendChild(replay);
+                        }
                         frag.appendChild(box);
                     }
 

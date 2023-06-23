@@ -312,7 +312,8 @@
                         type.setAttribute("data-text", type.textContent);
 
                         const time = document.createElement("td");
-                        time.textContent = timestamp(data.trem.eew[i].time);
+                        time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
+                        if (data.trem.eew[i].cancel) time.colSpan = 8;
                         time.setAttribute("data-text", time.textContent);
 
                         const loc = document.createElement("td");
@@ -353,13 +354,15 @@
                         box.appendChild(date);
                         box.appendChild(time_release);
                         box.appendChild(time);
-                        box.appendChild(loc);
-                        box.appendChild(lat);
-                        box.appendChild(lon);
-                        box.appendChild(depth);
-                        box.appendChild(scale);
-                        box.appendChild(max);
-                        box.appendChild(alert);
+                        if (!data.trem.eew[i].cancel) {
+                            box.appendChild(loc);
+                            box.appendChild(lat);
+                            box.appendChild(lon);
+                            box.appendChild(depth);
+                            box.appendChild(scale);
+                            box.appendChild(max);
+                            box.appendChild(alert);
+                        }
                         frag_2.appendChild(box);
                     }
 
@@ -388,7 +391,7 @@
                 title.textContent = `TREM EEW ${params.id} 第${num}報`;
             }
             const raw_table = document.getElementById("raw-table");
-            
+
             const frag = new DocumentFragment();
 
             for (let i = 0, k = Object.keys(cache.trem.raw[num - 1].station), n = k.length, id = k[i]; i < n; i++, id = k[i]) {
@@ -434,6 +437,10 @@
         }
 
         function convertDate(date) {
+            if (!date.includes(".")) {
+                const list = date.split(":");
+                date = `${list[0]}:${list[1]}:${list[2]}.${list[3]}`;
+            }
             const arr = date.split(/[- :]/);
             return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5].split(".")[0], arr[5].split(".")[1]).getTime();
         }
