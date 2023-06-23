@@ -295,7 +295,7 @@
                     for (let i = 0; i < data.trem.eew.length; i++) {
                         const box = document.createElement("tr");
                         const no = document.createElement("td");
-                        no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${i + 1}</a>`;
+                        no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${((i < data.trem.eew.length - 1) ? "" : "#") + (i + 1)}</a>`;
                         no.setAttribute("data-text", no.textContent);
 
                         const date = document.createElement("td");

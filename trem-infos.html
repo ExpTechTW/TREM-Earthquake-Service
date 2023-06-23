@@ -33,6 +33,7 @@
                     <th>深度</th>
                     <th>規模</th>
                     <th>重播</th>
+                    <th>氣象局網站</th>
                 </tr>
             </thead>
             <tbody id="trem-table"></tbody>
@@ -197,7 +198,7 @@
                         }
                         if (data[id].error) {
                             time_eew.textContent = "誤報";
-                            time_eew.colSpan = 11;
+                            time_eew.colSpan = 12;
                             time_eew.setAttribute("data-text", time_eew.textContent);
                         }
 
@@ -211,10 +212,23 @@
                         max.setAttribute("data-text", max.textContent);
 
                         const no = document.createElement("td");
+                        const link = document.createElement("td");
                         if (data[id].eq.no) {
                             no.textContent = (!data[id].eq.no.toString().includes("000")) ? data[id].eq.no : "小區域";
                             no.setAttribute("data-text", no.textContent);
                             if (!data[id].eq.no.toString().includes("000")) no.style.backgroundColor = "goldenrod";
+                            const originTime = new Date(data[id].eq.time);
+                            const cwb_code = "EQ"
+                                + data[id].eq.no
+                                + "-"
+                                + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
+                                + (originTime.getDate() < 10 ? "0" : "") + originTime.getDate()
+                                + "-"
+                                + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
+                                + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
+                                + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
+                            link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`
+                            link.setAttribute("data-text", link.textContent);
                         }
 
                         const time = document.createElement("td");
@@ -265,6 +279,7 @@
                             box.appendChild(depth);
                             box.appendChild(scale);
                             box.appendChild(replay);
+                            box.appendChild(link);
                         }
                         frag.appendChild(box);
                     }
