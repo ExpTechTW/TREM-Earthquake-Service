@@ -140,9 +140,9 @@
                         const lon = document.createElement("th");
                         lon.textContent = data[id].eq.lon;
                         const depth = document.createElement("th");
-                        depth.textContent = `${data[id].eq.depth} km`;
+                        if(data[id].eq.depth) depth.textContent = `${data[id].eq.depth} km`;
                         const scale = document.createElement("th");
-                        scale.textContent = `M ${data[id].eq.scale}`;
+                        if(data[id].eq.scale) scale.textContent = `M ${data[id].eq.scale}`;
                         box.appendChild(ID);
                         box.appendChild(time_trem);
                         box.appendChild(time_eew);
