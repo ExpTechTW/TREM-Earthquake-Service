@@ -16,7 +16,8 @@
             <a id="back" style="color: white;text-decoration: none;"
                 href="https://exptech.com.tw/api/v1/file/trem-infos.html">←
                 返回列表</a>
-            <a id="mode" style="color: white;text-decoration: none;display: none;" onclick="switch_mode(null)">←
+            <a id="mode" style="color: white;text-decoration: none;display: none;cursor: pointer;"
+                onclick="switch_mode(null)">←
                 上一頁</a>
         </div>
         <div id="ID" style="color: white;font-size: 40px;font-weight: 900;"></div>
@@ -175,7 +176,7 @@
                         const id = Object.keys(data)[i];
                         const box = document.createElement("tr");
                         const no = document.createElement("th");
-                        no.innerHTML = `<a style="color: white;text-decoration:underline;" onclick="switch_mode(${i + 1})">${i + 1}</a>`;
+                        no.innerHTML = `<a style="color: white;text-decoration:underline;cursor: pointer;" onclick="switch_mode(${i + 1})">${i + 1}</a>`;
                         const time_release = document.createElement("th");
                         time_release.textContent = FULL(data.trem.eew[i].timestamp);
                         const type = document.createElement("th");
@@ -221,9 +222,6 @@
         }
 
         function switch_mode(num) {
-            if (!cache.trem.raw) return;
-            if (num > cache.trem.raw.length) return;
-            if (!cache.trem.raw[num - 1]) return
             if (!num) {
                 document.getElementById("back").style.display = "";
                 document.getElementById("mode").style.display = "none";
@@ -233,6 +231,9 @@
                 document.getElementById("ID").textContent = params.id;
                 return
             } else {
+                if (!cache.trem.raw) return;
+                if (num > cache.trem.raw.length) return;
+                if (!cache.trem.raw[num - 1]) return;
                 document.getElementById("back").style.display = "none";
                 document.getElementById("mode").style.display = "";
                 document.getElementById("trem-table").style.display = "none";
