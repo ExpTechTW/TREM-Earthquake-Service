@@ -1,0 +1,309 @@
+<html lang="zh-Hant">
+
+<head>
+    <title id="title">TREM Earthquake History</title>
+    <meta charset="utf-8" />
+    <meta content="TREM Earthquake History" property="og:title" />
+    <meta content="TREM Earthquake History | TREM 地震預警紀錄" property="og:description" />
+    <meta content="https://exptechtw.github.io/" property="og:url" />
+    <meta content="https://raw.githubusercontent.com/ExpTechTW/ExpTechTW.github.io/master/image/main/ExpTech.jpg"
+        property="og:image" />
+</head>
+
+<body style="background-color: #333439;">
+    <div>
+        <div style="padding: 10px;">
+            <a id="back" style="color: white;text-decoration: none;"
+                href="https://exptech.com.tw/api/v1/file/trem-infos.html">←
+                返回列表</a>
+            <a id="mode" style="color: white;text-decoration: none;display: none;" onclick="switch_mode(null)">←
+                上一頁</a>
+        </div>
+        <div id="ID" style="color: white;font-size: 40px;font-weight: 900;"></div>
+        <table id="trem-table"></table>
+        <table id="eew-table"></table>
+        <table id="raw-table" style="display: none;"></table>
+    </div>
+
+    <style>
+        td,
+        th {
+            border: 1px solid darkgrey;
+            padding: 10px;
+        }
+
+        table {
+            color: white;
+            text-align: center;
+            border: 2px solid white;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .intensity_1 {
+            color: white;
+            background-color: #6B7878;
+        }
+
+        .intensity_2 {
+            color: white;
+            background-color: #1E6EE6;
+        }
+
+        .intensity_3 {
+            color: white;
+            background-color: #32B464;
+        }
+
+        .intensity_4 {
+            color: black;
+            background-color: #FFE05D;
+        }
+
+        .intensity_5 {
+            color: black;
+            background-color: #FFAA13;
+        }
+
+        .intensity_6 {
+            color: black;
+            background-color: #EF700F;
+        }
+
+        .intensity_7 {
+            color: white;
+            background-color: #E60000;
+        }
+
+        .intensity_8 {
+            color: white;
+            background-color: #A00000;
+        }
+
+        .intensity_9 {
+            color: white;
+            background-color: #5D0090;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
+    <script>
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        if (!params.id) window.location.href = 'https://exptech.com.tw/api/v1/file/eew-infos.html';
+        document.getElementById("ID").textContent = params.id;
+
+        let cache = {};
+        load();
+
+        function load() {
+            axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}`)
+                .then((res) => {
+                    const trem_table = document.getElementById("trem-table");
+                    trem_table.innerHTML = `<tr>
+                                                <th>UUID</th>
+                                                <th>測站位置</th>
+                                                <th>X</th>
+                                                <th>Y</th>
+                                                <th>Z</th>
+                                                <th>PGA</th>
+                                                <th>PGV</th>
+                                                <th>震度</th>
+                                                <th>起始時間</th>
+                                                <th>結束時間</th>
+                                                <th>圖像</th>
+                                            </tr>`;
+                    const data = res.data;
+                    cache = data
+                    for (let i = 0; i < data.station.length; i++) {
+                        const id = Object.keys(data)[i];
+                        const box = document.createElement("tr");
+                        const ID = document.createElement("th");
+                        ID.textContent = data.station[i].uuid;
+                        const loc = document.createElement("th");
+                        loc.textContent = data.station[i].name;
+                        const x = document.createElement("th");
+                        x.textContent = data.station[i].x;
+                        const y = document.createElement("th");
+                        y.textContent = data.station[i].y;
+                        const z = document.createElement("th");
+                        z.textContent = data.station[i].z;
+                        const pga = document.createElement("th");
+                        pga.textContent = data.station[i].pga;
+                        const pgv = document.createElement("th");
+                        pgv.textContent = data.station[i].pgv;
+                        const intensity = document.createElement("th");
+                        intensity.textContent = intensity_int_to_string(data.station[i].intensity);
+                        intensity.className = `intensity_${data.station[i].intensity}`;
+                        const start = document.createElement("th");
+                        start.textContent = FULL(new Date(convertDate(data.station[i].start.replaceAll("/", "-"))).getTime());
+                        const end = document.createElement("th");
+                        end.textContent = FULL(data.station[i].end);
+                        const img = document.createElement("th");
+                        img.innerHTML = `<a style="color: white;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
+                        box.appendChild(ID);
+                        box.appendChild(loc);
+                        box.appendChild(x);
+                        box.appendChild(y);
+                        box.appendChild(z);
+                        box.appendChild(pga);
+                        box.appendChild(pgv);
+                        box.appendChild(intensity);
+                        box.appendChild(start);
+                        box.appendChild(end);
+                        box.appendChild(img);
+                        trem_table.appendChild(box);
+                    }
+                    const eew_table = document.getElementById("eew-table");
+                    eew_table.innerHTML = `<tr>
+                                                <th>No.</th>
+                                                <th>發布時間</th>
+                                                <th>類型</th>
+                                                <th></th>
+                                                <th>發震時間</th>
+                                                <th>震央位置</th>
+                                                <th>北緯</th>
+                                                <th>東經</th>
+                                                <th>深度</th>
+                                                <th>規模</th>
+                                                <th>最大預估震度</th>
+                                                <th>警報</th>
+                                            </tr>`;
+                    let Alert = false;
+                    for (let i = 0; i < data.trem.eew.length; i++) {
+                        const id = Object.keys(data)[i];
+                        const box = document.createElement("tr");
+                        const no = document.createElement("th");
+                        no.innerHTML = `<a style="color: white;text-decoration:underline;" onclick="switch_mode(${i + 1})">${i + 1}</a>`;
+                        const time_release = document.createElement("th");
+                        time_release.textContent = FULL(data.trem.eew[i].timestamp);
+                        const type = document.createElement("th");
+                        type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
+                        type.style.backgroundColor = (data.trem.eew[i].model == "eew") ? "darkslateblue" : "darkgrey";
+                        const space = document.createElement("th");
+                        const time = document.createElement("th");
+                        time.textContent = FULL(data.trem.eew[i].time);
+                        const loc = document.createElement("th");
+                        loc.textContent = data.trem.eew[i].location;
+                        if (data.trem.eew[i].location.includes("海")) loc.style.backgroundColor = "darkblue";
+                        else loc.style.backgroundColor = "darkgreen";
+                        const lat = document.createElement("th");
+                        lat.textContent = data.trem.eew[i].lat;
+                        const lon = document.createElement("th");
+                        lon.textContent = data.trem.eew[i].lon;
+                        const depth = document.createElement("th");
+                        depth.textContent = `${data.trem.eew[i].depth} km`;
+                        const scale = document.createElement("th");
+                        scale.textContent = `M ${data.trem.eew[i].scale}`;
+                        const max = document.createElement("th");
+                        max.textContent = intensity_int_to_string(data.trem.eew[i].max);
+                        max.className = `intensity_${data.trem.eew[i].max}`;
+                        if (!Alert && data.trem.eew[i].max > 4) Alert = true
+                        const alert = document.createElement("th");
+                        alert.textContent = (data.trem.eew[i].alert || Alert) ? "是" : "否";
+                        if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
+                        box.appendChild(no);
+                        box.appendChild(time_release);
+                        box.appendChild(type);
+                        box.appendChild(space);
+                        box.appendChild(time);
+                        box.appendChild(loc);
+                        box.appendChild(lat);
+                        box.appendChild(lon);
+                        box.appendChild(depth);
+                        box.appendChild(scale);
+                        box.appendChild(max);
+                        box.appendChild(alert);
+                        eew_table.appendChild(box);
+                    }
+                })
+        }
+
+        function switch_mode(num) {
+            if (!cache.trem.raw) return;
+            if (num > cache.trem.raw.length) return;
+            if (!cache.trem.raw[num - 1]) return
+            if (!num) {
+                document.getElementById("back").style.display = "";
+                document.getElementById("mode").style.display = "none";
+                document.getElementById("trem-table").style.display = "";
+                document.getElementById("eew-table").style.display = "";
+                document.getElementById("raw-table").style.display = "none";
+                document.getElementById("ID").textContent = params.id;
+                return
+            } else {
+                document.getElementById("back").style.display = "none";
+                document.getElementById("mode").style.display = "";
+                document.getElementById("trem-table").style.display = "none";
+                document.getElementById("eew-table").style.display = "none";
+                document.getElementById("raw-table").style.display = "";
+                document.getElementById("ID").textContent = `TREM EEW ${params.id} 第${num}報`;
+            }
+            const raw_table = document.getElementById("raw-table");
+            raw_table.innerHTML = `<tr>
+                                        <th>UUID</th>
+                                        <th>三軸合成</th>
+                                        <th>垂直向(震幅)</th>
+                                        <th>P(自動)</th>
+                                        <th>S(自動)</th>
+                                    </tr>`;
+            for (let i = 0; i < Object.keys(cache.trem.raw[num - 1].station).length; i++) {
+                const id = Object.keys(cache.trem.raw[num - 1].station)[i];
+                const box = document.createElement("tr");
+                const ID = document.createElement("th");
+                ID.textContent = id;
+                const composite = document.createElement("th");
+                composite.textContent = cache.trem.raw[num - 1].station[id];
+                const z = document.createElement("th");
+                z.textContent = cache.trem.raw[num - 1].z[id].toFixed(2);
+                const p = document.createElement("th");
+                p.textContent = (cache.trem.raw[num - 1].time[id] == cache.trem.raw[num - 1].s_time[id]) ? "-" : FULL(cache.trem.raw[num - 1].time[id]);
+                const s = document.createElement("th");
+                s.textContent = FULL(cache.trem.raw[num - 1].s_time[id]);
+                box.appendChild(ID);
+                box.appendChild(composite);
+                box.appendChild(z);
+                box.appendChild(p);
+                box.appendChild(s);
+                raw_table.appendChild(box);
+            }
+        }
+
+        function FULL(time = Date.now()) {
+            const now = new Date(time);
+            let Now = now.getFullYear().toString();
+            Now += "/";
+            if ((now.getMonth() + 1) < 10) Now += "0" + (now.getMonth() + 1).toString();
+            else Now += (now.getMonth() + 1).toString();
+            Now += "/";
+            if (now.getDate() < 10) Now += "0" + now.getDate().toString();
+            else Now += now.getDate().toString();
+            Now += " ";
+            if (now.getHours() < 10) Now += "0" + now.getHours().toString();
+            else Now += now.getHours().toString();
+            Now += ":";
+            if (now.getMinutes() < 10) Now += "0" + now.getMinutes().toString();
+            else Now += now.getMinutes().toString();
+            Now += ":";
+            if (now.getSeconds() < 10) Now += "0" + now.getSeconds().toString();
+            else Now += now.getSeconds().toString();
+            Now += ".";
+            if (now.getMilliseconds() < 10) Now += "00" + now.getMilliseconds().toString();
+            else if (now.getMilliseconds() < 100) Now += "0" + now.getMilliseconds().toString();
+            else Now += now.getMilliseconds().toString();
+            return Now.replace(".000", "");
+        }
+
+        function intensity_int_to_string(int) {
+            return (int == 0 || int == 1 || int == 2 || int == 3 || int == 4) ? `${int}級` : (int == 5) ? "5弱" : (int == 6) ? "5強" : (int == 7) ? "6弱" : (int == 8) ? "6強" : "7級";
+        }
+
+        function convertDate(date) {
+            const arr = date.split(/[- :]/);
+            return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5].split(".")[0], arr[5].split(".")[1]);
+        }
+    </script>
+</body>
+
+</html>
