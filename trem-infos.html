@@ -10,28 +10,88 @@
         property="og:image" />
 </head>
 
-<body style="background-color: #333439;">
+<body style="background-color: #333439;user-select: none;">
     <div>
         <div style="color: white;padding: 10px;">
             <div style="font-size: 30px;font-weight: 900;">TREM 地震預警紀錄</div>
             <div style="font-size: 12px;">每分鐘自動刷新</div>
         </div>
-        <table id="trem-table"></table>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>日期</th>
+                    <th>預警時間(TREM)</th>
+                    <th>預警時間(CWB)</th>
+                    <th>觸發站數</th>
+                    <th>最大震度(TREM)</th>
+                    <th>編號</th>
+                    <th>發震時間</th>
+                    <th>震央位置</th>
+                    <th>北緯</th>
+                    <th>東經</th>
+                    <th>深度</th>
+                    <th>規模</th>
+                    <th>重播</th>
+                </tr>
+            </thead>
+            <tbody id="trem-table"></tbody>
+        </table>
     </div>
 
     <style>
-        td,
-        th {
-            border: 1px solid darkgrey;
-            padding: 10px;
+        body {
+            font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         table {
-            color: white;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        table>thead>tr {
+            background-color: hsl(168deg 100% 30%);
+            text-align: left;
+        }
+
+        table th,
+        table td {
+            color: #fff;
+            padding: 12px 15px;
             text-align: center;
-            border: 2px solid white;
-            border-radius: 10px;
-            padding: 10px;
+        }
+
+        table>tbody>tr>td::after {
+            display: block;
+            content: attr(data-text);
+            font-weight: bold;
+            height: 0;
+            overflow: hidden;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        table>tbody>tr {
+            background-color: hsl(168deg 100% 30% / 12%);
+        }
+
+        table>tbody>tr:nth-of-type(even) {
+            background-color: hsl(168deg 100% 60% / 12%);
+        }
+
+        table>tbody>tr:last-of-type {
+            border-bottom: 2px solid hsl(168deg 100% 30%);
+        }
+
+        table>tbody>tr:hover {
+            font-weight: bold;
+            color: hsl(168deg 100% 30%);
         }
 
         .intensity_1 {
@@ -82,76 +142,115 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
     <script>
+        const trem_table = document.getElementById("trem-table");
+
+        const timestamp = (ts, date = false, re = null) => {
+            const t = new Date(ts);
+            if (date) {
+                return [
+                    `${t.getFullYear()}/`,
+                    `${t.getMonth() + 1}/`.padStart(3, "0"),
+                    `${t.getDate()}`.padStart(2, "0")
+                ].join("");
+            } else {
+                return [
+                    re && new Date(re).getDate() > t.getDate() ? "（隔日）" : "",
+                    `${t.getHours()}:`.padStart(3, "0"),
+                    `${t.getMinutes() + 1}:`.padStart(3, "0"),
+                    `${t.getSeconds()}.`.padStart(3, "0"),
+                    `${t.getMilliseconds()}`.padStart(3, "0")
+                ].join("");
+            }
+        }
+
         load();
-        setInterval(() => {
-            load();
-        }, 60_000)
+        setInterval(() => load(), 60_000)
 
         function load() {
             axios.get("https://exptech.com.tw/api/v1/earthquake/trem-info")
                 .then((res) => {
-                    const trem_table = document.getElementById("trem-table");
-                    trem_table.innerHTML = `<tr>
-                                                <th>ID</th>
-                                                <th>預警時間(TREM)</th>
-                                                <th>預警時間(CWB)</th>
-                                                <th>觸發站數</th>
-                                                <th>最大震度(TREM)</th>
-                                                <th></th>
-                                                <th>編號</th>
-                                                <th>發震時間</th>
-                                                <th>震央位置</th>
-                                                <th>北緯</th>
-                                                <th>東經</th>
-                                                <th>深度</th>
-                                                <th>規模</th>
-                                                <th>重播</th>
-                                            </tr>`;
+                    const frag = new DocumentFragment();
+
                     const data = res.data;
-                    for (let i = Object.keys(data).length - 1; i >= 0; i--) {
-                        const id = Object.keys(data)[i];
+                    for (let k = Object.keys(data), i = k.length - 1, id = k[i]; i >= 0; i--, id = k[i]) {
                         const box = document.createElement("tr");
-                        const ID = document.createElement("th");
+                        const ID = document.createElement("td");
                         ID.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem-info.html?id=${id}">${id}</a>`;
-                        const replay = document.createElement("th");
+                        ID.setAttribute("data-text", ID.textContent);
+
+                        const replay = document.createElement("td");
                         replay.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem.html?time=${data[id].alert - 10000}">點擊</a>`;
-                        const time_trem = document.createElement("th");
-                        time_trem.textContent = FULL(data[id].alert);
-                        const time_eew = document.createElement("th");
-                        if (data[id].eew) time_eew.textContent = FULL(data[id].eew);
-                        const target = document.createElement("th");
+                        replay.setAttribute("data-text", replay.textContent);
+
+                        const date = document.createElement("td");
+                        date.textContent = timestamp(data[id].alert, true);
+                        date.setAttribute("data-text", date.textContent);
+
+                        const time_trem = document.createElement("td");
+                        time_trem.textContent = timestamp(data[id].alert);
+                        time_trem.setAttribute("data-text", time_trem.textContent);
+
+                        const time_eew = document.createElement("td");
+                        if (data[id].eew) {
+                            time_eew.textContent = timestamp(data[id].eew);
+                            time_eew.setAttribute("data-text", time_eew.textContent);
+                        }
+
+                        const target = document.createElement("td");
                         target.textContent = data[id].target;
-                        const max = document.createElement("th");
+                        target.setAttribute("data-text", target.textContent);
+
+                        const max = document.createElement("td");
                         max.textContent = intensity_int_to_string(data[id].max);
                         max.className = `intensity_${data[id].max}`;
-                        const space = document.createElement("th");
+                        max.setAttribute("data-text", max.textContent);
 
-                        const no = document.createElement("th");
+                        const no = document.createElement("td");
                         if (data[id].eq.no) {
                             no.textContent = data[id].eq.no;
+                            no.setAttribute("data-text", no.textContent);
                             if (!data[id].eq.no.toString().includes("000")) no.style.backgroundColor = "goldenrod";
                         }
-                        const time = document.createElement("th");
-                        if (data[id].eq.time) time.textContent = FULL(data[id].eq.time);
-                        const loc = document.createElement("th");
+
+                        const time = document.createElement("td");
+                        if (data[id].eq.time) {
+                            time.textContent = timestamp(data[id].eq.time);
+                            time.setAttribute("data-text", time.textContent);
+                        }
+
+                        const loc = document.createElement("td");
                         loc.textContent = data[id].eq.loc;
+                        loc.setAttribute("data-text", loc.textContent);
                         if (data[id].eq.loc)
                             if (data[id].eq.loc.includes("海")) loc.style.backgroundColor = "darkblue";
                             else loc.style.backgroundColor = "darkgreen";
-                        const lat = document.createElement("th");
+
+                        const lat = document.createElement("td");
                         lat.textContent = data[id].eq.lat;
-                        const lon = document.createElement("th");
+                        lat.setAttribute("data-text", lat.textContent);
+
+                        const lon = document.createElement("td");
                         lon.textContent = data[id].eq.lon;
-                        const depth = document.createElement("th");
-                        if (data[id].eq.depth) depth.textContent = `${data[id].eq.depth} km`;
-                        const scale = document.createElement("th");
-                        if (data[id].eq.scale) scale.textContent = `M ${data[id].eq.scale}`;
+                        lon.setAttribute("data-text", lon.textContent);
+
+                        const depth = document.createElement("td");
+                        if (data[id].eq.depth) {
+                            depth.textContent = `${data[id].eq.depth} km`;
+                            depth.setAttribute("data-text", depth.textContent);
+                        }
+
+                        const scale = document.createElement("td");
+                        if (data[id].eq.scale) {
+                            scale.textContent = `M ${data[id].eq.scale}`;
+                            scale.setAttribute("data-text", scale.textContent);
+                        }
+
                         box.appendChild(ID);
+                        box.append(date);
                         box.appendChild(time_trem);
                         box.appendChild(time_eew);
                         box.appendChild(target);
                         box.appendChild(max);
-                        box.appendChild(space);
                         box.appendChild(no);
                         box.appendChild(time);
                         box.appendChild(loc);
@@ -160,34 +259,11 @@
                         box.appendChild(depth);
                         box.appendChild(scale);
                         box.appendChild(replay);
-                        trem_table.appendChild(box);
+                        frag.appendChild(box);
                     }
-                })
-        }
 
-        function FULL(time = Date.now()) {
-            const now = new Date(time);
-            let Now = now.getFullYear().toString();
-            Now += "/";
-            if ((now.getMonth() + 1) < 10) Now += "0" + (now.getMonth() + 1).toString();
-            else Now += (now.getMonth() + 1).toString();
-            Now += "/";
-            if (now.getDate() < 10) Now += "0" + now.getDate().toString();
-            else Now += now.getDate().toString();
-            Now += " ";
-            if (now.getHours() < 10) Now += "0" + now.getHours().toString();
-            else Now += now.getHours().toString();
-            Now += ":";
-            if (now.getMinutes() < 10) Now += "0" + now.getMinutes().toString();
-            else Now += now.getMinutes().toString();
-            Now += ":";
-            if (now.getSeconds() < 10) Now += "0" + now.getSeconds().toString();
-            else Now += now.getSeconds().toString();
-            Now += ".";
-            if (now.getMilliseconds() < 10) Now += "00" + now.getMilliseconds().toString();
-            else if (now.getMilliseconds() < 100) Now += "0" + now.getMilliseconds().toString();
-            else Now += now.getMilliseconds().toString();
-            return Now.replace(".000", "");
+                    trem_table.replaceChildren(frag);
+                })
         }
 
         function intensity_int_to_string(int) {

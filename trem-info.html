@@ -10,7 +10,7 @@
         property="og:image" />
 </head>
 
-<body style="background-color: #333439;">
+<body style="background-color: #333439;user-select: none;">
     <div>
         <div style="padding: 10px;">
             <a id="back" style="color: white;text-decoration: none;"
@@ -21,25 +21,112 @@
                 上一頁</a>
         </div>
         <div id="ID" style="color: white;font-size: 40px;font-weight: 900;"></div>
-        <table id="trem-table"></table>
-        <table id="eew-table"></table>
-        <table id="raw-table" style="display: none;"></table>
+        <table id="trem">
+            <thead>
+                <tr>
+                    <th>UUID</th>
+                    <th>測站位置</th>
+                    <th>X</th>
+                    <th>Y</th>
+                    <th>Z</th>
+                    <th>PGA</th>
+                    <th>PGV</th>
+                    <th>震度</th>
+                    <th>日期</th>
+                    <th>起始時間</th>
+                    <th>結束時間</th>
+                    <th>圖像</th>
+                </tr>
+            </thead>
+            <tbody id="trem-table"></tbody>
+        </table>
+        <table id="eew">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>類型</th>
+                    <th>日期</th>
+                    <th>發布時間</th>
+                    <th>發震時間</th>
+                    <th>震央位置</th>
+                    <th>北緯</th>
+                    <th>東經</th>
+                    <th>深度</th>
+                    <th>規模</th>
+                    <th>最大預估震度</th>
+                    <th>警報</th>
+                </tr>
+            </thead>
+            <tbody id="eew-table"></tbody>
+        </table>
+        <table id="raw" style="display: none;">
+            <thead>
+                <tr>
+                    <th>UUID</th>
+                    <th>三軸合成</th>
+                    <th>垂直向(震幅)</th>
+                    <th>日期</th>
+                    <th>P(自動)</th>
+                    <th>S(自動)</th>
+                </tr>
+            </thead>
+            <tbody id="raw-table"></tbody>
+        </table>
     </div>
 
     <style>
-        td,
-        th {
-            border: 1px solid darkgrey;
-            padding: 10px;
+        body {
+            font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         table {
-            color: white;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        table>thead>tr {
+            background-color: hsl(300deg 100% 30%);
+            text-align: left;
+        }
+
+        table th,
+        table td {
+            color: #fff;
+            padding: 12px 15px;
             text-align: center;
-            border: 2px solid white;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 10px;
+        }
+
+        table>tbody>tr>td::after {
+            display: block;
+            content: attr(data-text);
+            font-weight: bold;
+            height: 0;
+            overflow: hidden;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        table>tbody>tr {
+            background-color: hsl(300deg 100% 30% / 12%);
+        }
+
+        table>tbody>tr:nth-of-type(even) {
+            background-color: hsl(300deg 100% 60% / 12%);
+        }
+
+        table>tbody>tr:last-of-type {
+            border-bottom: 2px solid hsl(300deg 100% 30%);
+        }
+
+        table>tbody>tr:hover {
+            font-weight: bold;
+            color: hsl(300deg 100% 30%);
         }
 
         .intensity_1 {
@@ -93,7 +180,33 @@
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         if (!params.id) window.location.href = 'https://exptech.com.tw/api/v1/file/eew-infos.html';
-        document.getElementById("ID").textContent = params.id;
+        const title = document.getElementById("ID");
+        const back = document.getElementById("back");
+        const mode = document.getElementById("mode");
+        const trem = document.getElementById("trem");
+        const eew = document.getElementById("eew");
+        const raw = document.getElementById("raw");
+        const eew_table = document.getElementById("eew-table");
+        const trem_table = document.getElementById("trem-table");
+
+        const timestamp = (ts, date = false, re = null) => {
+            const t = new Date(ts);
+            if (date) {
+                return [
+                    `${t.getFullYear()}/`,
+                    `${t.getMonth() + 1}/`.padStart(3, "0"),
+                    `${t.getDate()}`.padStart(2, "0")
+                ].join("");
+            } else {
+                return [
+                    re && new Date(re).getDate() > t.getDate() ? "（隔日）" : "",
+                    `${t.getHours()}:`.padStart(3, "0"),
+                    `${t.getMinutes() + 1}:`.padStart(3, "0"),
+                    `${t.getSeconds()}.`.padStart(3, "0"),
+                    `${t.getMilliseconds()}`.padStart(3, "0")
+                ].join("");
+            }
+        }
 
         let cache = {};
         load();
@@ -101,48 +214,64 @@
         function load() {
             axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}`)
                 .then((res) => {
-                    const trem_table = document.getElementById("trem-table");
-                    trem_table.innerHTML = `<tr>
-                                                <th>UUID</th>
-                                                <th>測站位置</th>
-                                                <th>X</th>
-                                                <th>Y</th>
-                                                <th>Z</th>
-                                                <th>PGA</th>
-                                                <th>PGV</th>
-                                                <th>震度</th>
-                                                <th>起始時間</th>
-                                                <th>結束時間</th>
-                                                <th>圖像</th>
-                                            </tr>`;
                     const data = res.data;
                     cache = data
+
+                    const frag_1 = new DocumentFragment();
+
                     for (let i = 0; i < data.station.length; i++) {
-                        const id = Object.keys(data)[i];
                         const box = document.createElement("tr");
-                        const ID = document.createElement("th");
+                        const ID = document.createElement("td");
                         ID.textContent = data.station[i].uuid;
-                        const loc = document.createElement("th");
+                        ID.setAttribute("data-text", ID.textContent);
+
+                        const loc = document.createElement("td");
                         loc.textContent = data.station[i].name;
-                        const x = document.createElement("th");
+                        loc.setAttribute("data-text", loc.textContent);
+
+                        const x = document.createElement("td");
                         x.textContent = data.station[i].x;
-                        const y = document.createElement("th");
+                        x.setAttribute("data-text", x.textContent);
+
+                        const y = document.createElement("td");
                         y.textContent = data.station[i].y;
-                        const z = document.createElement("th");
+                        y.setAttribute("data-text", y.textContent);
+
+                        const z = document.createElement("td");
                         z.textContent = data.station[i].z;
-                        const pga = document.createElement("th");
+                        z.setAttribute("data-text", z.textContent);
+
+                        const pga = document.createElement("td");
                         pga.textContent = data.station[i].pga;
-                        const pgv = document.createElement("th");
+                        pga.setAttribute("data-text", pga.textContent);
+
+                        const pgv = document.createElement("td");
                         pgv.textContent = data.station[i].pgv;
-                        const intensity = document.createElement("th");
+                        pgv.setAttribute("data-text", pgv.textContent);
+
+                        const intensity = document.createElement("td");
                         intensity.textContent = intensity_int_to_string(data.station[i].intensity);
                         intensity.className = `intensity_${data.station[i].intensity}`;
-                        const start = document.createElement("th");
-                        start.textContent = FULL(new Date(convertDate(data.station[i].start.replaceAll("/", "-"))).getTime());
-                        const end = document.createElement("th");
-                        end.textContent = FULL(data.station[i].end);
-                        const img = document.createElement("th");
+                        intensity.setAttribute("data-text", intensity.textContent);
+
+                        const time_start = convertDate(data.station[i].start.replaceAll("/", "-"));
+
+                        const date = document.createElement("td");
+                        date.textContent = timestamp(time_start, true);
+                        date.setAttribute("data-text", date.textContent);
+
+                        const start = document.createElement("td");
+                        start.textContent = timestamp(time_start);
+                        start.setAttribute("data-text", start.textContent);
+
+                        const end = document.createElement("td");
+                        end.textContent = timestamp(data.station[i].end);
+                        end.setAttribute("data-text", end.textContent);
+
+                        const img = document.createElement("td");
                         img.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
+                        img.setAttribute("data-text", img.textContent);
+
                         box.appendChild(ID);
                         box.appendChild(loc);
                         box.appendChild(x);
@@ -151,63 +280,78 @@
                         box.appendChild(pga);
                         box.appendChild(pgv);
                         box.appendChild(intensity);
+                        box.appendChild(date);
                         box.appendChild(start);
                         box.appendChild(end);
                         box.appendChild(img);
-                        trem_table.appendChild(box);
+                        frag_1.appendChild(box);
                     }
-                    const eew_table = document.getElementById("eew-table");
-                    eew_table.innerHTML = `<tr>
-                                                <th>No.</th>
-                                                <th>發布時間</th>
-                                                <th>類型</th>
-                                                <th></th>
-                                                <th>發震時間</th>
-                                                <th>震央位置</th>
-                                                <th>北緯</th>
-                                                <th>東經</th>
-                                                <th>深度</th>
-                                                <th>規模</th>
-                                                <th>最大預估震度</th>
-                                                <th>警報</th>
-                                            </tr>`;
+
+                    trem_table.replaceChildren(frag_1);
+
+                    const frag_2 = new DocumentFragment();
+
                     let Alert = false;
                     for (let i = 0; i < data.trem.eew.length; i++) {
-                        const id = Object.keys(data)[i];
                         const box = document.createElement("tr");
-                        const no = document.createElement("th");
+                        const no = document.createElement("td");
                         no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${i + 1}</a>`;
-                        const time_release = document.createElement("th");
-                        time_release.textContent = FULL(data.trem.eew[i].timestamp);
-                        const type = document.createElement("th");
+                        no.setAttribute("data-text", no.textContent);
+
+                        const date = document.createElement("td");
+                        date.textContent = timestamp(data.trem.eew[i].timestamp, true);
+                        date.setAttribute("data-text", date.textContent);
+
+                        const time_release = document.createElement("td");
+                        time_release.textContent = timestamp(data.trem.eew[i].timestamp);
+                        time_release.setAttribute("data-text", time_release.textContent);
+
+                        const type = document.createElement("td");
                         type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
                         type.style.backgroundColor = (data.trem.eew[i].model == "eew") ? "darkslateblue" : "darkgrey";
-                        const space = document.createElement("th");
-                        const time = document.createElement("th");
-                        time.textContent = FULL(data.trem.eew[i].time);
-                        const loc = document.createElement("th");
+                        type.setAttribute("data-text", type.textContent);
+
+                        const time = document.createElement("td");
+                        time.textContent = timestamp(data.trem.eew[i].time);
+                        time.setAttribute("data-text", time.textContent);
+
+                        const loc = document.createElement("td");
                         loc.textContent = data.trem.eew[i].location;
+                        loc.setAttribute("data-text", loc.textContent);
                         if (data.trem.eew[i].location.includes("海")) loc.style.backgroundColor = "darkblue";
                         else loc.style.backgroundColor = "darkgreen";
-                        const lat = document.createElement("th");
+
+                        const lat = document.createElement("td");
                         lat.textContent = data.trem.eew[i].lat;
-                        const lon = document.createElement("th");
+                        lat.setAttribute("data-text", lat.textContent);
+
+                        const lon = document.createElement("td");
                         lon.textContent = data.trem.eew[i].lon;
-                        const depth = document.createElement("th");
+                        lon.setAttribute("data-text", lon.textContent);
+
+                        const depth = document.createElement("td");
                         depth.textContent = `${data.trem.eew[i].depth} km`;
-                        const scale = document.createElement("th");
+                        depth.setAttribute("data-text", depth.textContent);
+
+                        const scale = document.createElement("td");
                         scale.textContent = `M ${data.trem.eew[i].scale}`;
-                        const max = document.createElement("th");
+                        scale.setAttribute("data-text", scale.textContent);
+
+                        const max = document.createElement("td");
                         max.textContent = intensity_int_to_string(data.trem.eew[i].max);
                         max.className = `intensity_${data.trem.eew[i].max}`;
+                        max.setAttribute("data-text", max.textContent);
+
                         if (!Alert && data.trem.eew[i].max > 4) Alert = true
-                        const alert = document.createElement("th");
+                        const alert = document.createElement("td");
                         alert.textContent = (data.trem.eew[i].alert || Alert) ? "是" : "否";
+                        alert.setAttribute("data-text", alert.textContent);
                         if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
+
                         box.appendChild(no);
-                        box.appendChild(time_release);
                         box.appendChild(type);
-                        box.appendChild(space);
+                        box.appendChild(date);
+                        box.appendChild(time_release);
                         box.appendChild(time);
                         box.appendChild(loc);
                         box.appendChild(lat);
@@ -216,84 +360,73 @@
                         box.appendChild(scale);
                         box.appendChild(max);
                         box.appendChild(alert);
-                        eew_table.appendChild(box);
+                        frag_2.appendChild(box);
                     }
+
+                    eew_table.replaceChildren(frag_2);
                 })
         }
 
         function switch_mode(num) {
             if (!num) {
-                document.getElementById("back").style.display = "";
-                document.getElementById("mode").style.display = "none";
-                document.getElementById("trem-table").style.display = "";
-                document.getElementById("eew-table").style.display = "";
-                document.getElementById("raw-table").style.display = "none";
-                document.getElementById("ID").textContent = params.id;
+                back.style.display = "";
+                mode.style.display = "none";
+                trem.style.display = "";
+                eew.style.display = "";
+                raw.style.display = "none";
+                title.textContent = params.id;
                 return
             } else {
                 if (!cache.trem.raw) return;
                 if (num > cache.trem.raw.length) return;
                 if (!cache.trem.raw[num - 1]) return;
-                document.getElementById("back").style.display = "none";
-                document.getElementById("mode").style.display = "";
-                document.getElementById("trem-table").style.display = "none";
-                document.getElementById("eew-table").style.display = "none";
-                document.getElementById("raw-table").style.display = "";
-                document.getElementById("ID").textContent = `TREM EEW ${params.id} 第${num}報`;
+                back.style.display = "none";
+                mode.style.display = "";
+                trem.style.display = "none";
+                eew.style.display = "none";
+                raw.style.display = "";
+                title.textContent = `TREM EEW ${params.id} 第${num}報`;
             }
             const raw_table = document.getElementById("raw-table");
-            raw_table.innerHTML = `<tr>
-                                        <th>UUID</th>
-                                        <th>三軸合成</th>
-                                        <th>垂直向(震幅)</th>
-                                        <th>P(自動)</th>
-                                        <th>S(自動)</th>
-                                    </tr>`;
-            for (let i = 0; i < Object.keys(cache.trem.raw[num - 1].station).length; i++) {
-                const id = Object.keys(cache.trem.raw[num - 1].station)[i];
+            
+            const frag = new DocumentFragment();
+
+            for (let i = 0, k = Object.keys(cache.trem.raw[num - 1].station), n = k.length, id = k[i]; i < n; i++, id = k[i]) {
                 const box = document.createElement("tr");
-                const ID = document.createElement("th");
+                const ID = document.createElement("td");
                 ID.textContent = id;
-                const composite = document.createElement("th");
+                ID.setAttribute("data-text", ID.textContent);
+
+                const composite = document.createElement("td");
                 composite.textContent = cache.trem.raw[num - 1].station[id];
-                const z = document.createElement("th");
+                composite.setAttribute("data-text", composite.textContent);
+
+                const z = document.createElement("td");
                 z.textContent = cache.trem.raw[num - 1].z[id].toFixed(2);
-                const p = document.createElement("th");
-                p.textContent = (cache.trem.raw[num - 1].time[id] == cache.trem.raw[num - 1].s_time[id]) ? "-" : FULL(cache.trem.raw[num - 1].time[id]);
-                const s = document.createElement("th");
-                s.textContent = FULL(cache.trem.raw[num - 1].s_time[id]);
+                z.setAttribute("data-text", z.textContent);
+
+                const date = document.createElement("td");
+                date.textContent = timestamp(cache.trem.raw[num - 1].s_time[id], true);
+                date.setAttribute("data-text", date.textContent);
+
+                const p = document.createElement("td");
+                p.textContent = (cache.trem.raw[num - 1].time[id] == cache.trem.raw[num - 1].s_time[id]) ? "-" : timestamp(cache.trem.raw[num - 1].time[id]);
+                p.setAttribute("data-text", p.textContent);
+
+                const s = document.createElement("td");
+                s.textContent = timestamp(cache.trem.raw[num - 1].s_time[id]);
+                s.setAttribute("data-text", s.textContent);
+
                 box.appendChild(ID);
                 box.appendChild(composite);
                 box.appendChild(z);
+                box.appendChild(date);
                 box.appendChild(p);
                 box.appendChild(s);
-                raw_table.appendChild(box);
+                frag.appendChild(box);
             }
-        }
 
-        function FULL(time = Date.now()) {
-            const now = new Date(time);
-            let Now = now.getFullYear().toString();
-            Now += "/";
-            if ((now.getMonth() + 1) < 10) Now += "0" + (now.getMonth() + 1).toString();
-            else Now += (now.getMonth() + 1).toString();
-            Now += "/";
-            if (now.getDate() < 10) Now += "0" + now.getDate().toString();
-            else Now += now.getDate().toString();
-            Now += " ";
-            if (now.getHours() < 10) Now += "0" + now.getHours().toString();
-            else Now += now.getHours().toString();
-            Now += ":";
-            if (now.getMinutes() < 10) Now += "0" + now.getMinutes().toString();
-            else Now += now.getMinutes().toString();
-            Now += ":";
-            if (now.getSeconds() < 10) Now += "0" + now.getSeconds().toString();
-            else Now += now.getSeconds().toString();
-            Now += ".";
-            if (now.getMilliseconds() < 10) Now += "00" + now.getMilliseconds().toString();
-            else if (now.getMilliseconds() < 100) Now += "0" + now.getMilliseconds().toString();
-            else Now += now.getMilliseconds().toString();
-            return Now.replace(".000", "");
+            raw_table.replaceChildren(frag);
         }
 
         function intensity_int_to_string(int) {
@@ -302,7 +435,7 @@
 
         function convertDate(date) {
             const arr = date.split(/[- :]/);
-            return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5].split(".")[0], arr[5].split(".")[1]);
+            return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5].split(".")[0], arr[5].split(".")[1]).getTime();
         }
     </script>
 </body>
