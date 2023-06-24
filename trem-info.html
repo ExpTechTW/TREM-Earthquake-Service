@@ -34,7 +34,7 @@
                     <th>X</th>
                     <th>Y</th>
                     <th>Z</th>
-                    <th>PGA</th>
+                    <th>PGA<br>[理論]</th>
                     <th>PGV</th>
                     <th>震度</th>
                     <th>日期</th>
@@ -45,7 +45,6 @@
                     <th>P(理論)</th>
                     <th>S(理論)</th>
                     <th>震央距</th>
-                    <th>圖像</th>
                 </tr>
             </thead>
             <tbody id="trem-table"></tbody>
@@ -256,11 +255,11 @@
                                 const box = document.createElement("tr");
                                 const ID = document.createElement("td");
                                 const uuid = data.station[i].uuid;
-                                ID.textContent = uuid;
+                                ID.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">${uuid}</a>`;
                                 ID.setAttribute("data-text", ID.textContent);
 
                                 const loc = document.createElement("td");
-                                loc.textContent = data.station[i].name;
+                                loc.innerHTML = data.station[i].name.replace(" ", "<br>");
                                 loc.setAttribute("data-text", loc.textContent);
 
                                 const x = document.createElement("td");
@@ -276,8 +275,6 @@
                                 z.setAttribute("data-text", z.textContent);
 
                                 const pga = document.createElement("td");
-                                pga.textContent = `${data.station[i].pga} gal`;
-                                pga.setAttribute("data-text", pga.textContent);
 
                                 const pgv = document.createElement("td");
                                 pgv.textContent = `${data.station[i].pgv} kine`;
@@ -318,8 +315,9 @@
                                 const dist = document.createElement("td");
                                 const theory_p = document.createElement("td");
                                 const theory_s = document.createElement("td");
+                                let theory_pga_text = "";
 
-                                if (station_data[uuid]) {
+                                if (station_data[uuid] && data.eq.depth) {
                                     const theory_dist_surface = Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101));
                                     const theory_dist = Math.sqrt(pow(theory_dist_surface) + pow(data.eq.depth));
 
@@ -328,13 +326,14 @@
                                     theory_s.textContent = timestamp((theory_dist / 3.5) * 1000 + data.eq.time);
                                     theory_s.setAttribute("data-text", theory_s.textContent);
 
-                                    dist.textContent = (data.eq.lat && data.eq.lon) ? `${Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101)).toFixed(2)} km` : "";
+                                    const dist_surface = Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101));
+                                    dist.textContent = (data.eq.lat && data.eq.lon) ? `${dist_surface.toFixed(2)} km` : "";
                                     dist.setAttribute("data-text", dist.textContent);
-                                }
 
-                                const img = document.createElement("td");
-                                img.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
-                                img.setAttribute("data-text", img.textContent);
+                                    theory_pga_text = `<br>[${(1.657 * Math.pow(Math.E, (1.533 * data.eq.scale)) * Math.pow(Math.sqrt(pow(dist_surface) + pow(data.eq.depth)), -1.607)).toFixed(2)} gal]`;
+                                }
+                                pga.innerHTML = `${data.station[i].pga} gal${theory_pga_text}`;
+                                pga.setAttribute("data-text", pga.textContent);
 
                                 box.appendChild(ID);
                                 box.appendChild(loc);
@@ -352,7 +351,6 @@
                                 box.appendChild(theory_p);
                                 box.appendChild(theory_s);
                                 box.appendChild(dist);
-                                box.appendChild(img);
                                 frag_1.appendChild(box);
                             }
 
