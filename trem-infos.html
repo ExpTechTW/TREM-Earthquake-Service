@@ -143,6 +143,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
     <script>
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
         const trem_table = document.getElementById("trem-table");
 
         const timestamp = (ts, date = false, re = null) => {
@@ -168,7 +170,7 @@
         setInterval(() => load(), 60_000)
 
         function load() {
-            axios.get("https://exptech.com.tw/api/v1/earthquake/trem-info")
+            axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info?key=${params.key}`)
                 .then((res) => {
                     const frag = new DocumentFragment();
 
@@ -214,21 +216,23 @@
                         const no = document.createElement("td");
                         const link = document.createElement("td");
                         if (data[id].eq.no) {
-                            no.textContent = (!data[id].eq.no.toString().includes("000")) ? data[id].eq.no : "小區域";
+                            no.textContent = (data[id].eq.no == 111000) ? "TREM" : (!data[id].eq.no.toString().includes("000")) ? data[id].eq.no : "小區域";
                             no.setAttribute("data-text", no.textContent);
                             if (!data[id].eq.no.toString().includes("000")) no.style.backgroundColor = "goldenrod";
-                            const originTime = new Date(data[id].eq.time);
-                            const cwb_code = "EQ"
-                                + data[id].eq.no
-                                + "-"
-                                + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
-                                + (originTime.getDate() < 10 ? "0" : "") + originTime.getDate()
-                                + "-"
-                                + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
-                                + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
-                                + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
-                            link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`
-                            link.setAttribute("data-text", link.textContent);
+                            if (data[id].eq.no != 111000) {
+                                const originTime = new Date(data[id].eq.time);
+                                const cwb_code = "EQ"
+                                    + data[id].eq.no
+                                    + "-"
+                                    + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
+                                    + (originTime.getDate() < 10 ? "0" : "") + originTime.getDate()
+                                    + "-"
+                                    + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
+                                    + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
+                                    + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
+                                link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`
+                                link.setAttribute("data-text", link.textContent);
+                            }
                         }
 
                         const time = document.createElement("td");
