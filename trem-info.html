@@ -21,7 +21,10 @@
                 上一頁</a>
         </div>
         <div id="ID" style="color: white;font-size: 40px;font-weight: 900;"></div>
-        <a id="old" style="color: lightskyblue;">舊版頁面</a>
+        <div style="display: grid;">
+            <a id="old" style="color: lightskyblue;">舊版頁面</a>
+            <a id="report-cwb" style="color: lightskyblue;display: none;">地震報告(CWB)</a>
+        </div>
         <table id="trem">
             <thead>
                 <tr>
@@ -226,6 +229,22 @@
                             cache = data
                             title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
 
+                            if (data.eq.no != 111000) {
+                                const report_cwb = document.getElementById("report-cwb");
+                                report_cwb.style.display = ""
+                                const originTime = new Date(data.eq.time);
+                                const cwb_code = "EQ"
+                                    + data.eq.no
+                                    + "-"
+                                    + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
+                                    + (originTime.getDate() < 10 ? "0" : "") + originTime.getDate()
+                                    + "-"
+                                    + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
+                                    + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
+                                    + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
+                                report_cwb.href = `https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html`;
+                            }
+
                             const frag_1 = new DocumentFragment();
 
                             for (let i = 0; i < data.station.length; i++) {
@@ -282,12 +301,13 @@
                                 const s = document.createElement("td");
                                 if (data.trem.raw) {
                                     const num = data.trem.raw.length - 1;
+                                    if (data.trem.raw[num].time[uuid]) {
+                                        p.textContent = (data.trem.raw[num].time[uuid] == data.trem.raw[num].s_time[uuid]) ? "" : timestamp(data.trem.raw[num].time[uuid]);
+                                        p.setAttribute("data-text", p.textContent);
 
-                                    p.textContent = (data.trem.raw[num].time[uuid] == data.trem.raw[num].s_time[uuid]) ? "" : timestamp(data.trem.raw[num].time[uuid]);
-                                    p.setAttribute("data-text", p.textContent);
-
-                                    s.textContent = timestamp(data.trem.raw[num].s_time[uuid]);
-                                    s.setAttribute("data-text", s.textContent);
+                                        s.textContent = timestamp(data.trem.raw[num].s_time[uuid]);
+                                        s.setAttribute("data-text", s.textContent);
+                                    }
                                 }
 
                                 const dist = document.createElement("td");

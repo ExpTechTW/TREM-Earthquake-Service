@@ -37,7 +37,7 @@
                     <th>深度</th>
                     <th>規模</th>
                     <th>重播</th>
-                    <th>氣象局網站</th>
+                    <th>地震報告(CWB)</th>
                 </tr>
             </thead>
             <tbody id="trem-table"></tbody>
@@ -234,7 +234,7 @@
                                     + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
                                     + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
                                     + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
-                                link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`
+                                link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`;
                                 link.setAttribute("data-text", link.textContent);
                             }
                         }
