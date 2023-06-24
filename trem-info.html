@@ -36,6 +36,9 @@
                     <th>日期</th>
                     <th>起始時間</th>
                     <th>結束時間</th>
+                    <th>P(自動)</th>
+                    <th>S(自動)</th>
+                    <th>震央距</th>
                     <th>圖像</th>
                 </tr>
             </thead>
@@ -214,162 +217,186 @@
         load();
 
         function load() {
-            axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}`)
-                .then((res) => {
-                    const data = res.data;
-                    cache = data
-                    title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
+            axios.get("https://exptech.com.tw/api/v1/file/resource/station.json")
+                .then((station_data) => {
+                    station_data = station_data.data;
+                    axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}`)
+                        .then((res) => {
+                            const data = res.data;
+                            cache = data
+                            title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
 
-                    const frag_1 = new DocumentFragment();
+                            const frag_1 = new DocumentFragment();
 
-                    for (let i = 0; i < data.station.length; i++) {
-                        const box = document.createElement("tr");
-                        const ID = document.createElement("td");
-                        ID.textContent = data.station[i].uuid;
-                        ID.setAttribute("data-text", ID.textContent);
+                            for (let i = 0; i < data.station.length; i++) {
+                                const box = document.createElement("tr");
+                                const ID = document.createElement("td");
+                                const uuid = data.station[i].uuid;
+                                ID.textContent = uuid;
+                                ID.setAttribute("data-text", ID.textContent);
 
-                        const loc = document.createElement("td");
-                        loc.textContent = data.station[i].name;
-                        loc.setAttribute("data-text", loc.textContent);
+                                const loc = document.createElement("td");
+                                loc.textContent = data.station[i].name;
+                                loc.setAttribute("data-text", loc.textContent);
 
-                        const x = document.createElement("td");
-                        x.textContent = data.station[i].x;
-                        x.setAttribute("data-text", x.textContent);
+                                const x = document.createElement("td");
+                                x.textContent = data.station[i].x;
+                                x.setAttribute("data-text", x.textContent);
 
-                        const y = document.createElement("td");
-                        y.textContent = data.station[i].y;
-                        y.setAttribute("data-text", y.textContent);
+                                const y = document.createElement("td");
+                                y.textContent = data.station[i].y;
+                                y.setAttribute("data-text", y.textContent);
 
-                        const z = document.createElement("td");
-                        z.textContent = data.station[i].z;
-                        z.setAttribute("data-text", z.textContent);
+                                const z = document.createElement("td");
+                                z.textContent = data.station[i].z;
+                                z.setAttribute("data-text", z.textContent);
 
-                        const pga = document.createElement("td");
-                        pga.textContent = data.station[i].pga;
-                        pga.setAttribute("data-text", pga.textContent);
+                                const pga = document.createElement("td");
+                                pga.textContent = data.station[i].pga;
+                                pga.setAttribute("data-text", pga.textContent);
 
-                        const pgv = document.createElement("td");
-                        pgv.textContent = data.station[i].pgv;
-                        pgv.setAttribute("data-text", pgv.textContent);
+                                const pgv = document.createElement("td");
+                                pgv.textContent = data.station[i].pgv;
+                                pgv.setAttribute("data-text", pgv.textContent);
 
-                        const intensity = document.createElement("td");
-                        intensity.textContent = intensity_int_to_string(data.station[i].intensity);
-                        intensity.className = `intensity_${data.station[i].intensity}`;
-                        intensity.setAttribute("data-text", intensity.textContent);
+                                const intensity = document.createElement("td");
+                                intensity.textContent = intensity_int_to_string(data.station[i].intensity);
+                                intensity.className = `intensity_${data.station[i].intensity}`;
+                                intensity.setAttribute("data-text", intensity.textContent);
 
-                        const time_start = convertDate(data.station[i].start.replaceAll("/", "-"));
+                                const time_start = convertDate(data.station[i].start.replaceAll("/", "-"));
 
-                        const date = document.createElement("td");
-                        date.textContent = timestamp(time_start, true);
-                        date.setAttribute("data-text", date.textContent);
+                                const date = document.createElement("td");
+                                date.textContent = timestamp(time_start, true);
+                                date.setAttribute("data-text", date.textContent);
 
-                        const start = document.createElement("td");
-                        start.textContent = timestamp(time_start);
-                        start.setAttribute("data-text", start.textContent);
+                                const start = document.createElement("td");
+                                start.textContent = timestamp(time_start);
+                                start.setAttribute("data-text", start.textContent);
 
-                        const end = document.createElement("td");
-                        end.textContent = timestamp(data.station[i].end);
-                        end.setAttribute("data-text", end.textContent);
+                                const end = document.createElement("td");
+                                end.textContent = timestamp(data.station[i].end);
+                                end.setAttribute("data-text", end.textContent);
 
-                        const img = document.createElement("td");
-                        img.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
-                        img.setAttribute("data-text", img.textContent);
+                                const p = document.createElement("td");
+                                const s = document.createElement("td");
+                                if (data.trem.raw) {
+                                    const num = data.trem.raw.length - 1;
 
-                        box.appendChild(ID);
-                        box.appendChild(loc);
-                        box.appendChild(x);
-                        box.appendChild(y);
-                        box.appendChild(z);
-                        box.appendChild(pga);
-                        box.appendChild(pgv);
-                        box.appendChild(intensity);
-                        box.appendChild(date);
-                        box.appendChild(start);
-                        box.appendChild(end);
-                        box.appendChild(img);
-                        frag_1.appendChild(box);
-                    }
+                                    p.textContent = (data.trem.raw[num].time[uuid] == data.trem.raw[num].s_time[uuid]) ? "" : timestamp(data.trem.raw[num].time[uuid]);
+                                    p.setAttribute("data-text", p.textContent);
 
-                    trem_table.replaceChildren(frag_1);
+                                    s.textContent = timestamp(data.trem.raw[num].s_time[uuid]);
+                                    s.setAttribute("data-text", s.textContent);
+                                }
 
-                    const frag_2 = new DocumentFragment();
+                                const dist = document.createElement("td");
+                                dist.textContent = (data.eq.lat && data.eq.lon && station_data[uuid]) ? `${Math.sqrt(Math.pow((data.eq.lat - station_data[uuid].Lat) * 111, 2) + Math.pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101, 2)).toFixed(2)} km` : "";
+                                dist.setAttribute("data-text", dist.textContent);
 
-                    let Alert = false;
-                    for (let i = 0; i < data.trem.eew.length; i++) {
-                        const box = document.createElement("tr");
-                        const no = document.createElement("td");
-                        no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${((i < data.trem.eew.length - 1) ? "" : "#") + (i + 1)}</a>`;
-                        no.setAttribute("data-text", no.textContent);
+                                const img = document.createElement("td");
+                                img.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
+                                img.setAttribute("data-text", img.textContent);
 
-                        const date = document.createElement("td");
-                        date.textContent = timestamp(data.trem.eew[i].timestamp, true);
-                        date.setAttribute("data-text", date.textContent);
+                                box.appendChild(ID);
+                                box.appendChild(loc);
+                                box.appendChild(x);
+                                box.appendChild(y);
+                                box.appendChild(z);
+                                box.appendChild(pga);
+                                box.appendChild(pgv);
+                                box.appendChild(intensity);
+                                box.appendChild(date);
+                                box.appendChild(start);
+                                box.appendChild(end);
+                                box.appendChild(p);
+                                box.appendChild(s);
+                                box.appendChild(dist);
+                                box.appendChild(img);
+                                frag_1.appendChild(box);
+                            }
 
-                        const time_release = document.createElement("td");
-                        time_release.textContent = timestamp(data.trem.eew[i].timestamp);
-                        time_release.setAttribute("data-text", time_release.textContent);
+                            trem_table.replaceChildren(frag_1);
 
-                        const type = document.createElement("td");
-                        type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
-                        type.style.backgroundColor = (data.trem.eew[i].model == "eew") ? "darkslateblue" : "darkgrey";
-                        type.setAttribute("data-text", type.textContent);
+                            const frag_2 = new DocumentFragment();
 
-                        const time = document.createElement("td");
-                        time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
-                        if (data.trem.eew[i].cancel) time.colSpan = 8;
-                        time.setAttribute("data-text", time.textContent);
+                            let Alert = false;
+                            for (let i = 0; i < data.trem.eew.length; i++) {
+                                const box = document.createElement("tr");
+                                const no = document.createElement("td");
+                                no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${((i < data.trem.eew.length - 1) ? "" : "#") + (i + 1)}</a>`;
+                                no.setAttribute("data-text", no.textContent);
 
-                        const loc = document.createElement("td");
-                        loc.textContent = data.trem.eew[i].location;
-                        loc.setAttribute("data-text", loc.textContent);
-                        if (data.trem.eew[i].location.includes("海")) loc.style.backgroundColor = "darkblue";
-                        else loc.style.backgroundColor = "darkgreen";
+                                const date = document.createElement("td");
+                                date.textContent = timestamp(data.trem.eew[i].timestamp, true);
+                                date.setAttribute("data-text", date.textContent);
 
-                        const lat = document.createElement("td");
-                        lat.textContent = data.trem.eew[i].lat;
-                        lat.setAttribute("data-text", lat.textContent);
+                                const time_release = document.createElement("td");
+                                time_release.textContent = timestamp(data.trem.eew[i].timestamp);
+                                time_release.setAttribute("data-text", time_release.textContent);
 
-                        const lon = document.createElement("td");
-                        lon.textContent = data.trem.eew[i].lon;
-                        lon.setAttribute("data-text", lon.textContent);
+                                const type = document.createElement("td");
+                                type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
+                                type.style.backgroundColor = (data.trem.eew[i].model == "eew") ? "darkslateblue" : "darkgrey";
+                                type.setAttribute("data-text", type.textContent);
 
-                        const depth = document.createElement("td");
-                        depth.textContent = `${data.trem.eew[i].depth} ㎞`;
-                        depth.setAttribute("data-text", depth.textContent);
+                                const time = document.createElement("td");
+                                time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
+                                if (data.trem.eew[i].cancel) time.colSpan = 8;
+                                time.setAttribute("data-text", time.textContent);
 
-                        const scale = document.createElement("td");
-                        scale.textContent = `M ${data.trem.eew[i].scale.toFixed(1)}`;
-                        scale.setAttribute("data-text", scale.textContent);
+                                const loc = document.createElement("td");
+                                loc.textContent = data.trem.eew[i].location;
+                                loc.setAttribute("data-text", loc.textContent);
+                                if (data.trem.eew[i].location.includes("海")) loc.style.backgroundColor = "darkblue";
+                                else loc.style.backgroundColor = "darkgreen";
 
-                        const max = document.createElement("td");
-                        max.textContent = intensity_int_to_string(data.trem.eew[i].max);
-                        max.className = `intensity_${data.trem.eew[i].max}`;
-                        max.setAttribute("data-text", max.textContent);
+                                const lat = document.createElement("td");
+                                lat.textContent = data.trem.eew[i].lat;
+                                lat.setAttribute("data-text", lat.textContent);
 
-                        if (!Alert && data.trem.eew[i].max > 4) Alert = true
-                        const alert = document.createElement("td");
-                        alert.textContent = (data.trem.eew[i].alert || Alert) ? "是" : "否";
-                        alert.setAttribute("data-text", alert.textContent);
-                        if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
+                                const lon = document.createElement("td");
+                                lon.textContent = data.trem.eew[i].lon;
+                                lon.setAttribute("data-text", lon.textContent);
 
-                        box.appendChild(no);
-                        box.appendChild(type);
-                        box.appendChild(date);
-                        box.appendChild(time_release);
-                        box.appendChild(time);
-                        if (!data.trem.eew[i].cancel) {
-                            box.appendChild(loc);
-                            box.appendChild(lat);
-                            box.appendChild(lon);
-                            box.appendChild(depth);
-                            box.appendChild(scale);
-                            box.appendChild(max);
-                            box.appendChild(alert);
-                        }
-                        frag_2.appendChild(box);
-                    }
+                                const depth = document.createElement("td");
+                                depth.textContent = `${data.trem.eew[i].depth} ㎞`;
+                                depth.setAttribute("data-text", depth.textContent);
 
-                    eew_table.replaceChildren(frag_2);
+                                const scale = document.createElement("td");
+                                scale.textContent = `M ${data.trem.eew[i].scale.toFixed(1)}`;
+                                scale.setAttribute("data-text", scale.textContent);
+
+                                const max = document.createElement("td");
+                                max.textContent = intensity_int_to_string(data.trem.eew[i].max);
+                                max.className = `intensity_${data.trem.eew[i].max}`;
+                                max.setAttribute("data-text", max.textContent);
+
+                                if (!Alert && data.trem.eew[i].max > 4) Alert = true
+                                const alert = document.createElement("td");
+                                alert.textContent = (data.trem.eew[i].alert || Alert) ? "是" : "否";
+                                alert.setAttribute("data-text", alert.textContent);
+                                if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
+
+                                box.appendChild(no);
+                                box.appendChild(type);
+                                box.appendChild(date);
+                                box.appendChild(time_release);
+                                box.appendChild(time);
+                                if (!data.trem.eew[i].cancel) {
+                                    box.appendChild(loc);
+                                    box.appendChild(lat);
+                                    box.appendChild(lon);
+                                    box.appendChild(depth);
+                                    box.appendChild(scale);
+                                    box.appendChild(max);
+                                    box.appendChild(alert);
+                                }
+                                frag_2.appendChild(box);
+                            }
+
+                            eew_table.replaceChildren(frag_2);
+                        })
                 })
         }
 
@@ -416,7 +443,7 @@
                 date.setAttribute("data-text", date.textContent);
 
                 const p = document.createElement("td");
-                p.textContent = (cache.trem.raw[num - 1].time[id] == cache.trem.raw[num - 1].s_time[id]) ? "-" : timestamp(cache.trem.raw[num - 1].time[id]);
+                p.textContent = (cache.trem.raw[num - 1].time[id] == cache.trem.raw[num - 1].s_time[id]) ? "" : timestamp(cache.trem.raw[num - 1].time[id]);
                 p.setAttribute("data-text", p.textContent);
 
                 const s = document.createElement("td");
