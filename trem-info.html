@@ -216,6 +216,7 @@
                 .then((res) => {
                     const data = res.data;
                     cache = data
+                    title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
 
                     const frag_1 = new DocumentFragment();
 
@@ -377,7 +378,7 @@
                 trem.style.display = "";
                 eew.style.display = "";
                 raw.style.display = "none";
-                title.textContent = params.id;
+                title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
                 return
             } else {
                 if (!cache.trem.raw) return;
