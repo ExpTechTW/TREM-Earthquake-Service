@@ -13,8 +13,7 @@
 <body style="background-color: #333439;user-select: none;">
     <div>
         <div style="padding: 10px;">
-            <a id="back" style="color: white;text-decoration: none;"
-                href="https://exptech.com.tw/api/v1/file/trem-infos.html">←
+            <a id="back" style="color: white;text-decoration: none;">←
                 返回列表</a>
             <a id="mode" style="color: white;text-decoration: none;display: none;cursor: pointer;"
                 onclick="switch_mode(null)">←
@@ -200,6 +199,8 @@
         const raw = document.getElementById("raw");
         const eew_table = document.getElementById("eew-table");
         const trem_table = document.getElementById("trem-table");
+
+        back.href = `https://exptech.com.tw/api/v1/file/trem-infos.html?key=${params.key}`;
 
         const timestamp = (ts, date = false, re = null) => {
             const t = new Date(ts);
