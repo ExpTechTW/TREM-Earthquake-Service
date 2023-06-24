@@ -21,6 +21,7 @@
                 上一頁</a>
         </div>
         <div id="ID" style="color: white;font-size: 40px;font-weight: 900;"></div>
+        <a id="old" style="color: lightskyblue;">舊版頁面</a>
         <table id="trem">
             <thead>
                 <tr>
@@ -179,7 +180,8 @@
     <script>
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        if (!params.id) window.location.href = 'https://exptech.com.tw/api/v1/file/eew-infos.html';
+        if (!params.id) window.location.href = 'https://exptech.com.tw/api/v1/file/trem-infos.html';
+        document.getElementById("old").href = `https://exptech.com.tw/api/v1/file/trem-report.html?id=${params.id}`;
         const title = document.getElementById("ID");
         const back = document.getElementById("back");
         const mode = document.getElementById("mode");
