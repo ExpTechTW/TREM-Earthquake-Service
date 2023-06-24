@@ -1,0 +1,75 @@
+<html lang="zh-Hant">
+
+<head>
+    <title id="title">TREM Image</title>
+    <meta charset="utf-8" />
+    <meta content="TREM Image" property="og:title" />
+    <meta content="TREM Image | TREM 圖像" property="og:description" />
+    <meta content="https://exptechtw.github.io/" property="og:url" />
+    <meta content="https://raw.githubusercontent.com/ExpTechTW/ExpTechTW.github.io/master/image/main/ExpTech.jpg"
+        property="og:image" />
+</head>
+
+<body style="background-color: #333439;user-select: none;">
+    <div class="main">
+        <div style="font-size: 30px;font-weight: 900;">TREM 圖像</div>
+        <div style="font-size: 12px;">每分鐘自動刷新</div>
+        <a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem-infos.html">TREM Earthquake
+            History</a>
+        <div class="box">
+            <img src="" alt="" id="eew" class="img">
+            <img src="" alt="" id="report" class="img">
+            <img src="" alt="" id="i-cwb" class="img">
+            <img src="" alt="" id="i-palert" class="img">
+            <img src="" alt="" id="i-trem" class="img">
+        </div>
+    </div>
+
+    <style>
+        body {
+            font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        .main {
+            height: fit-content;
+            width: fit-content;
+            color: white;
+            padding: 10px;
+        }
+
+        .box {
+            background-color: #333439;
+            padding: 2px;
+            border-radius: 5px;
+        }
+
+        .img {
+            height: 348px;
+            width: 510px;
+            border: 2px solid white;
+            border-radius: 10px;
+            margin: 3px;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
+    <script>
+        load();
+
+        function load() {
+            axios.get(`https://exptech.com.tw/api/v1/images`)
+                .then((res) => {
+                    const data = res.data;
+                    document.getElementById("eew").src = `https://exptech.com.tw/api/v1/file${data.eew}?v=${Date.now()}`;
+                    document.getElementById("report").src = `https://exptech.com.tw/api/v1/file${data.report}?v=${Date.now()}`;
+                    document.getElementById("i-cwb").src = `https://exptech.com.tw/api/v1/file${data.intensity.cwb}?v=${Date.now()}`;
+                    document.getElementById("i-trem").src = `https://exptech.com.tw/api/v1/file${data.intensity.trem}?v=${Date.now()}`;
+                    document.getElementById("i-palert").src = `https://exptech.com.tw/api/v1/file${data.intensity.palert}?v=${Date.now()}`;
+                })
+        }
+
+        setInterval(() => load(), 60_000);
+    </script>
+</body>
+
+</html>
