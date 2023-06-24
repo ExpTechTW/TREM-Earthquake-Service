@@ -51,7 +51,7 @@
             </thead>
             <tbody id="trem-table"></tbody>
         </table>
-        <table id="eew">
+        <table id="eew" style="display: none;">
             <thead>
                 <tr>
                     <th>No.</th>
@@ -227,13 +227,13 @@
             axios.get("https://exptech.com.tw/api/v1/file/resource/station.json")
                 .then((station_data) => {
                     station_data = station_data.data;
-                    axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}`)
+                    axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}?key=${params.key}`)
                         .then((res) => {
                             const data = res.data;
                             cache = data
                             title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
 
-                            if (data.eq.no != 111000) {
+                            if (data.eq.no && data.eq.no != 111000) {
                                 const report_cwb = document.getElementById("report-cwb");
                                 report_cwb.style.display = ""
                                 const originTime = new Date(data.eq.time);
@@ -357,84 +357,87 @@
 
                             trem_table.replaceChildren(frag_1);
 
-                            const frag_2 = new DocumentFragment();
+                            if (data.trem.eew.length) {
+                                eew.style.display = "";
+                                const frag_2 = new DocumentFragment();
 
-                            let Alert = false;
-                            for (let i = 0; i < data.trem.eew.length; i++) {
-                                const box = document.createElement("tr");
-                                const no = document.createElement("td");
-                                no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${((i < data.trem.eew.length - 1) ? "" : "#") + (i + 1)}</a>`;
-                                no.setAttribute("data-text", no.textContent);
+                                let Alert = false;
+                                for (let i = 0; i < data.trem.eew.length; i++) {
+                                    const box = document.createElement("tr");
+                                    const no = document.createElement("td");
+                                    no.innerHTML = `<a style="${(data.trem.raw && i < data.trem.eew.length - 1) ? "color: lightskyblue;text-decoration:underline;cursor: pointer;" : "color: white;"}" onclick="switch_mode(${i + 1})">${((i < data.trem.eew.length - 1) ? "" : "#") + (i + 1)}</a>`;
+                                    no.setAttribute("data-text", no.textContent);
 
-                                const date = document.createElement("td");
-                                date.textContent = timestamp(data.trem.eew[i].timestamp, true);
-                                date.setAttribute("data-text", date.textContent);
+                                    const date = document.createElement("td");
+                                    date.textContent = timestamp(data.trem.eew[i].timestamp, true);
+                                    date.setAttribute("data-text", date.textContent);
 
-                                const time_release = document.createElement("td");
-                                time_release.textContent = timestamp(data.trem.eew[i].timestamp);
-                                time_release.setAttribute("data-text", time_release.textContent);
+                                    const time_release = document.createElement("td");
+                                    time_release.textContent = timestamp(data.trem.eew[i].timestamp);
+                                    time_release.setAttribute("data-text", time_release.textContent);
 
-                                const type = document.createElement("td");
-                                type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
-                                type.style.backgroundColor = (data.trem.eew[i].model == "eew") ? "darkslateblue" : "darkgrey";
-                                type.setAttribute("data-text", type.textContent);
+                                    const type = document.createElement("td");
+                                    type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
+                                    type.style.backgroundColor = (data.trem.eew[i].model == "eew") ? "darkslateblue" : "darkgrey";
+                                    type.setAttribute("data-text", type.textContent);
 
-                                const time = document.createElement("td");
-                                time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
-                                if (data.trem.eew[i].cancel) time.colSpan = 8;
-                                time.setAttribute("data-text", time.textContent);
+                                    const time = document.createElement("td");
+                                    time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
+                                    if (data.trem.eew[i].cancel) time.colSpan = 8;
+                                    time.setAttribute("data-text", time.textContent);
 
-                                const loc = document.createElement("td");
-                                loc.textContent = data.trem.eew[i].location;
-                                loc.setAttribute("data-text", loc.textContent);
-                                if (data.trem.eew[i].location.includes("海")) loc.style.backgroundColor = "darkblue";
-                                else loc.style.backgroundColor = "darkgreen";
+                                    const loc = document.createElement("td");
+                                    loc.textContent = data.trem.eew[i].location;
+                                    loc.setAttribute("data-text", loc.textContent);
+                                    if (data.trem.eew[i].location.includes("海")) loc.style.backgroundColor = "darkblue";
+                                    else loc.style.backgroundColor = "darkgreen";
 
-                                const lat = document.createElement("td");
-                                lat.textContent = data.trem.eew[i].lat;
-                                lat.setAttribute("data-text", lat.textContent);
+                                    const lat = document.createElement("td");
+                                    lat.textContent = data.trem.eew[i].lat;
+                                    lat.setAttribute("data-text", lat.textContent);
 
-                                const lon = document.createElement("td");
-                                lon.textContent = data.trem.eew[i].lon;
-                                lon.setAttribute("data-text", lon.textContent);
+                                    const lon = document.createElement("td");
+                                    lon.textContent = data.trem.eew[i].lon;
+                                    lon.setAttribute("data-text", lon.textContent);
 
-                                const depth = document.createElement("td");
-                                depth.textContent = `${data.trem.eew[i].depth} ㎞`;
-                                depth.setAttribute("data-text", depth.textContent);
+                                    const depth = document.createElement("td");
+                                    depth.textContent = `${data.trem.eew[i].depth} ㎞`;
+                                    depth.setAttribute("data-text", depth.textContent);
 
-                                const scale = document.createElement("td");
-                                scale.textContent = `M ${data.trem.eew[i].scale.toFixed(1)}`;
-                                scale.setAttribute("data-text", scale.textContent);
+                                    const scale = document.createElement("td");
+                                    scale.textContent = `M ${data.trem.eew[i].scale.toFixed(1)}`;
+                                    scale.setAttribute("data-text", scale.textContent);
 
-                                const max = document.createElement("td");
-                                max.textContent = intensity_int_to_string(data.trem.eew[i].max);
-                                max.className = `intensity_${data.trem.eew[i].max}`;
-                                max.setAttribute("data-text", max.textContent);
+                                    const max = document.createElement("td");
+                                    max.textContent = intensity_int_to_string(data.trem.eew[i].max);
+                                    max.className = `intensity_${data.trem.eew[i].max}`;
+                                    max.setAttribute("data-text", max.textContent);
 
-                                if (!Alert && data.trem.eew[i].max > 4) Alert = true
-                                const alert = document.createElement("td");
-                                alert.textContent = (data.trem.eew[i].alert || Alert) ? "是" : "否";
-                                alert.setAttribute("data-text", alert.textContent);
-                                if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
+                                    if (!Alert && data.trem.eew[i].max > 4) Alert = true
+                                    const alert = document.createElement("td");
+                                    alert.textContent = (data.trem.eew[i].alert || Alert) ? "是" : "否";
+                                    alert.setAttribute("data-text", alert.textContent);
+                                    if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
 
-                                box.appendChild(no);
-                                box.appendChild(type);
-                                box.appendChild(date);
-                                box.appendChild(time_release);
-                                box.appendChild(time);
-                                if (!data.trem.eew[i].cancel) {
-                                    box.appendChild(loc);
-                                    box.appendChild(lat);
-                                    box.appendChild(lon);
-                                    box.appendChild(depth);
-                                    box.appendChild(scale);
-                                    box.appendChild(max);
-                                    box.appendChild(alert);
+                                    box.appendChild(no);
+                                    box.appendChild(type);
+                                    box.appendChild(date);
+                                    box.appendChild(time_release);
+                                    box.appendChild(time);
+                                    if (!data.trem.eew[i].cancel) {
+                                        box.appendChild(loc);
+                                        box.appendChild(lat);
+                                        box.appendChild(lon);
+                                        box.appendChild(depth);
+                                        box.appendChild(scale);
+                                        box.appendChild(max);
+                                        box.appendChild(alert);
+                                    }
+                                    frag_2.appendChild(box);
                                 }
-                                frag_2.appendChild(box);
-                            }
 
-                            eew_table.replaceChildren(frag_2);
+                                eew_table.replaceChildren(frag_2);
+                            }
                         })
                 })
         }
@@ -444,7 +447,7 @@
                 back.style.display = "";
                 mode.style.display = "none";
                 trem.style.display = "";
-                eew.style.display = "";
+                if (cache.trem.eew.length) eew.style.display = "";
                 raw.style.display = "none";
                 title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
                 return
