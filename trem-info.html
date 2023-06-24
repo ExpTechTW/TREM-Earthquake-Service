@@ -43,6 +43,8 @@
                     <th>結束時間</th>
                     <th>P(自動)</th>
                     <th>S(自動)</th>
+                    <th>P(理論)</th>
+                    <th>S(理論)</th>
                     <th>震央距</th>
                     <th>圖像</th>
                 </tr>
@@ -313,8 +315,21 @@
                                 }
 
                                 const dist = document.createElement("td");
-                                dist.textContent = (data.eq.lat && data.eq.lon && station_data[uuid]) ? `${Math.sqrt(Math.pow((data.eq.lat - station_data[uuid].Lat) * 111, 2) + Math.pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101, 2)).toFixed(2)} km` : "";
-                                dist.setAttribute("data-text", dist.textContent);
+                                const theory_p = document.createElement("td");
+                                const theory_s = document.createElement("td");
+
+                                if (station_data[uuid]) {
+                                    const theory_dist_surface = Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101));
+                                    const theory_dist = Math.sqrt(pow(theory_dist_surface) + pow(data.eq.depth));
+
+                                    theory_p.textContent = timestamp((theory_dist / 6.5) * 1000 + data.eq.time);
+                                    theory_p.setAttribute("data-text", theory_p.textContent);
+                                    theory_s.textContent = timestamp((theory_dist / 3.5) * 1000 + data.eq.time);
+                                    theory_s.setAttribute("data-text", theory_s.textContent);
+
+                                    dist.textContent = (data.eq.lat && data.eq.lon) ? `${Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101)).toFixed(2)} km` : "";
+                                    dist.setAttribute("data-text", dist.textContent);
+                                }
 
                                 const img = document.createElement("td");
                                 img.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">點擊</a>`;
@@ -333,6 +348,8 @@
                                 box.appendChild(end);
                                 box.appendChild(p);
                                 box.appendChild(s);
+                                box.appendChild(theory_p);
+                                box.appendChild(theory_s);
                                 box.appendChild(dist);
                                 box.appendChild(img);
                                 frag_1.appendChild(box);
@@ -495,6 +512,10 @@
             }
             const arr = date.split(/[- :]/);
             return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5].split(".")[0], arr[5].split(".")[1]).getTime();
+        }
+
+        function pow(int) {
+            return Math.pow(int, 2)
         }
     </script>
 </body>
