@@ -24,7 +24,7 @@
             <a id="old" style="color: lightskyblue;">舊版頁面</a>
             <a id="report-cwb" style="color: lightskyblue;display: none;">地震報告(CWB)</a>
         </div>
-        <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ 此頁面所有資料均來自 TREM 結果請依 <b>中央氣象局</b> 發布之內容為準
+        <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ 此頁面所有資料均來自 TREM 結果請依 <b>中央氣象局(CWB)</b> 發布之內容為準
         </div>
         <table id="trem">
             <thead>
@@ -50,6 +50,7 @@
             </thead>
             <tbody id="trem-table"></tbody>
         </table>
+        <canvas id="myChart"></canvas>
         <table id="eew" style="display: none;">
             <thead>
                 <tr>
@@ -186,6 +187,7 @@
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
@@ -199,6 +201,7 @@
         const raw = document.getElementById("raw");
         const eew_table = document.getElementById("eew-table");
         const trem_table = document.getElementById("trem-table");
+        const ctx = document.getElementById('myChart');
 
         back.href = `https://exptech.com.tw/api/v1/file/trem-infos.html?key=${params.key}`;
 
@@ -251,6 +254,9 @@
                             }
 
                             const frag_1 = new DocumentFragment();
+                            const dist_list = [];
+                            const pga_list = [];
+                            const theory_pga_list = [];
 
                             for (let i = 0; i < data.station.length; i++) {
                                 const box = document.createElement("tr");
@@ -278,6 +284,7 @@
                                 const pga = document.createElement("td");
                                 pga.textContent = `${data.station[i].pga} gal`;
                                 pga.setAttribute("data-text", pga.textContent);
+                                pga_list.push(data.station[i].pga);
 
                                 const pgv = document.createElement("td");
                                 pgv.textContent = `${data.station[i].pgv} kine`;
@@ -333,8 +340,11 @@
                                     dist.textContent = (data.eq.lat && data.eq.lon) ? `${dist_surface.toFixed(2)} km` : "";
                                     dist.setAttribute("data-text", dist.textContent);
 
-                                    theory_pga.textContent = `${(1.657 * Math.pow(Math.E, (1.533 * data.eq.scale)) * Math.pow(Math.sqrt(pow(dist_surface) + pow(data.eq.depth)), -1.607)).toFixed(2)} gal`;
+                                    const theory_pga_num = (1.657 * Math.pow(Math.E, (1.533 * data.eq.scale)) * Math.pow(Math.sqrt(pow(dist_surface) + pow(data.eq.depth)), -1.607)).toFixed(2);
+                                    theory_pga.textContent = `${theory_pga_num} gal`;
                                     theory_pga.setAttribute("data-text", theory_pga.textContent);
+                                    dist_list.push(Number(dist_surface.toFixed(2)));
+                                    theory_pga_list.push(Number(theory_pga_num));
                                 }
 
                                 box.appendChild(ID);
@@ -358,6 +368,61 @@
                             }
 
                             trem_table.replaceChildren(frag_1);
+
+                            if (data.eq.depth) {
+                                for (let I = 0; I < dist_list.length - 1; I++)
+                                    for (let i = 0; i < dist_list.length - 1; i++)
+                                        if (dist_list[i] > dist_list[i + 1]) {
+                                            const Temp = dist_list[i];
+                                            dist_list[i] = dist_list[i + 1];
+                                            dist_list[i + 1] = Temp;
+                                            const Temp1 = pga_list[i];
+                                            pga_list[i] = pga_list[i + 1];
+                                            pga_list[i + 1] = Temp1;
+                                            const Temp2 = theory_pga_list[i];
+                                            theory_pga_list[i] = theory_pga_list[i + 1];
+                                            theory_pga_list[i + 1] = Temp2;
+                                        }
+
+                                const Chart_data = {
+                                    labels: dist_list,
+                                    datasets: [
+                                        {
+                                            type: 'bar',
+                                            label: '實測',
+                                            backgroundColor: "rgb(255, 99, 132)",
+                                            borderColor: "white",
+                                            data: pga_list,
+                                        },
+                                        {
+                                            type: 'line',
+                                            label: '理論',
+                                            backgroundColor: "rgb(54, 162, 235)",
+                                            borderColor: "white",
+                                            fill: false,
+                                            data: theory_pga_list,
+                                        }
+                                    ]
+                                };
+
+                                new Chart(ctx, {
+                                    type: 'line',
+                                    data: Chart_data,
+                                    options: {
+                                        plugins: {
+                                            title: {
+                                                text: 'PGA(gal) 震央距(km) 關係圖',
+                                                display: true
+                                            }
+                                        },
+                                        scales: {
+                                            y: {
+                                                stacked: true
+                                            },
+                                        },
+                                    },
+                                });
+                            }
 
                             if (data.trem.eew.length) {
                                 eew.style.display = "";
