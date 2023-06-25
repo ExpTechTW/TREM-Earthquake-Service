@@ -388,20 +388,20 @@
                                     labels: dist_list,
                                     datasets: [
                                         {
-                                            type: 'bar',
-                                            label: '實測',
-                                            backgroundColor: "rgb(255, 99, 132)",
-                                            borderColor: "white",
-                                            data: pga_list,
-                                        },
-                                        {
                                             type: 'line',
                                             label: '理論',
                                             backgroundColor: "rgb(54, 162, 235)",
                                             borderColor: "white",
                                             fill: false,
                                             data: theory_pga_list,
-                                        }
+                                        },
+                                        {
+                                            type: 'bar',
+                                            label: '實測',
+                                            backgroundColor: "rgb(255, 99, 132)",
+                                            borderColor: "white",
+                                            data: pga_list,
+                                        },
                                     ]
                                 };
 
@@ -413,7 +413,7 @@
                                             title: {
                                                 text: 'PGA(gal) 震央距(km) 關係圖',
                                                 display: true
-                                            }
+                                            },
                                         },
                                         scales: {
                                             y: {
