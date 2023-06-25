@@ -517,6 +517,7 @@
                 if (cache.trem.eew.length) eew.style.display = "";
                 raw.style.display = "none";
                 title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
+                ctx.style.display = "";
                 return
             } else {
                 if (!cache.trem.raw) return;
@@ -526,6 +527,7 @@
                 mode.style.display = "";
                 trem.style.display = "none";
                 eew.style.display = "none";
+                ctx.style.display = "none";
                 raw.style.display = "";
                 title.textContent = `TREM EEW ${params.id} 第${num}報`;
             }
