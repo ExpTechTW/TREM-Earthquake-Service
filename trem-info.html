@@ -461,11 +461,13 @@
                                     if (data.note) {
                                         if (data.note.rf && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.note.rf && !rf_eew) {
                                             rf_eew = true;
+                                            if (note_text != "") note_text += "<br>"
                                             note_text += `${timestamp(data.note.rf)}${(data.eq.time) ? `<br>(震後 ${((data.note.rf - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>RF-monitor 地震檢測`;
                                         }
                                         if (data.note.mrl && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.note.mrl && !mrl_eew) {
                                             mrl_eew = true;
-                                            note_text += `${timestamp(data.note.mrl)}${(data.eq.time) ? `<br>(震後 ${((data.note.mrl- data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>美麗蓮 特快報`;
+                                            if (note_text != "") note_text += "<br>"
+                                            note_text += `${timestamp(data.note.mrl)}${(data.eq.time) ? `<br>(震後 ${((data.note.mrl - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>美麗蓮 特快報`;
                                         }
                                     }
                                     note.innerHTML = note_text;
