@@ -67,6 +67,8 @@
                     <th>最大預估震度</th>
                     <th>警報</th>
                     <th>達標(CWB)</th>
+                    <th>震後</th>
+                    <th>距離檢知</th>
                     <th>備註</th>
                 </tr>
             </thead>
@@ -113,6 +115,7 @@
             color: #fff;
             padding: 12px 15px;
             text-align: center;
+            border: 0.2px solid darkgray;
         }
 
         table>tbody>tr>td::after {
@@ -462,7 +465,7 @@
 
                                     const time = document.createElement("td");
                                     time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
-                                    if (data.trem.eew[i].cancel) time.colSpan = 10;
+                                    if (data.trem.eew[i].cancel) time.colSpan = 12;
                                     time.setAttribute("data-text", time.textContent);
 
                                     const loc = document.createElement("td");
@@ -504,6 +507,14 @@
                                     cwb.setAttribute("data-text", cwb.textContent);
                                     if (CWB) cwb.style.backgroundColor = "red";
 
+                                    const release_after = document.createElement("td");
+                                    if (data.eq.time) release_after.textContent = `${((data.trem.eew[i].timestamp - data.eq.time) / 1000).toFixed(1)} 秒`;
+                                    release_after.setAttribute("data-text", release_after.textContent);
+
+                                    const alert_after = document.createElement("td");
+                                    alert_after.textContent = `${((data.trem.eew[i].timestamp - data.trem.eew[0].timestamp) / 1000).toFixed(1)} 秒`;
+                                    alert_after.setAttribute("data-text", alert_after.textContent);
+
                                     box.appendChild(no);
                                     box.appendChild(type);
                                     box.appendChild(date);
@@ -518,6 +529,8 @@
                                         box.appendChild(max);
                                         box.appendChild(alert);
                                         box.appendChild(cwb);
+                                        box.appendChild(release_after);
+                                        box.appendChild(alert_after);
                                         box.appendChild(cwb_release);
                                     }
                                     frag_2.appendChild(box);
