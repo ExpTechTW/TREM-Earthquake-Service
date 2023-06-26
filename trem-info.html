@@ -66,6 +66,8 @@
                     <th>規模</th>
                     <th>最大預估震度</th>
                     <th>警報</th>
+                    <th>達標(CWB)</th>
+                    <th>備註</th>
                 </tr>
             </thead>
             <tbody id="eew-table"></tbody>
@@ -429,6 +431,8 @@
                                 const frag_2 = new DocumentFragment();
 
                                 let Alert = false;
+                                let CWB = false;
+                                let cwb_eew = false
                                 for (let i = 0; i < data.trem.eew.length; i++) {
                                     const box = document.createElement("tr");
                                     const no = document.createElement("td");
@@ -443,6 +447,14 @@
                                     time_release.textContent = timestamp(data.trem.eew[i].timestamp);
                                     time_release.setAttribute("data-text", time_release.textContent);
 
+                                    const cwb_release = document.createElement("td");
+                                    if (data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.eew && !cwb_eew) {
+                                        cwb_eew = true;
+                                        cwb_release.innerHTML = `${timestamp(data.eew)}<br>CWB EEW 發布`;
+                                    }
+                                    if (cwb_eew) cwb_release.style.backgroundColor = "red";
+                                    cwb_release.setAttribute("data-text", cwb_release.textContent);
+
                                     const type = document.createElement("td");
                                     type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
                                     type.style.backgroundColor = (data.trem.eew[i].model == "eew") ? "darkslateblue" : "darkgrey";
@@ -450,7 +462,7 @@
 
                                     const time = document.createElement("td");
                                     time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
-                                    if (data.trem.eew[i].cancel) time.colSpan = 8;
+                                    if (data.trem.eew[i].cancel) time.colSpan = 10;
                                     time.setAttribute("data-text", time.textContent);
 
                                     const loc = document.createElement("td");
@@ -486,6 +498,12 @@
                                     alert.setAttribute("data-text", alert.textContent);
                                     if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
 
+                                    if (data.trem.eew[i].scale >= 4.5 || data.trem.eew[i].max >= 4 || (data.trem.eew[i].model == "nsspe" && data.trem.eew[i].max > 1)) CWB = true;
+                                    const cwb = document.createElement("td");
+                                    cwb.textContent = (CWB) ? "是" : "否";
+                                    cwb.setAttribute("data-text", cwb.textContent);
+                                    if (CWB) cwb.style.backgroundColor = "red";
+
                                     box.appendChild(no);
                                     box.appendChild(type);
                                     box.appendChild(date);
@@ -499,6 +517,8 @@
                                         box.appendChild(scale);
                                         box.appendChild(max);
                                         box.appendChild(alert);
+                                        box.appendChild(cwb);
+                                        box.appendChild(cwb_release);
                                     }
                                     frag_2.appendChild(box);
                                 }
