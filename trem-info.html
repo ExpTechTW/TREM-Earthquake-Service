@@ -448,7 +448,7 @@
                                     time_release.setAttribute("data-text", time_release.textContent);
 
                                     const cwb_release = document.createElement("td");
-                                    if (data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.eew && !cwb_eew) {
+                                    if (data.eew && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.eew && !cwb_eew) {
                                         cwb_eew = true;
                                         cwb_release.innerHTML = `${timestamp(data.eew)}<br>CWB EEW 發布`;
                                     }
