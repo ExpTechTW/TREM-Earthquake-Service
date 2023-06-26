@@ -113,7 +113,7 @@
         table th,
         table td {
             color: #fff;
-            padding: 12px 15px;
+            padding: 8px 10px;
             text-align: center;
             border: 0.2px solid darkgray;
         }
@@ -436,6 +436,8 @@
                                 let Alert = false;
                                 let CWB = false;
                                 let cwb_eew = false
+                                let rf_eew = false
+                                let mrl_eew = false
                                 for (let i = 0; i < data.trem.eew.length; i++) {
                                     const box = document.createElement("tr");
                                     const no = document.createElement("td");
@@ -450,13 +452,24 @@
                                     time_release.textContent = timestamp(data.trem.eew[i].timestamp);
                                     time_release.setAttribute("data-text", time_release.textContent);
 
-                                    const cwb_release = document.createElement("td");
+                                    let note_text = ""
+                                    const note = document.createElement("td");
                                     if (data.eew && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.eew && !cwb_eew) {
                                         cwb_eew = true;
-                                        cwb_release.innerHTML = `${timestamp(data.eew)}<br>CWB EEW 發布`;
+                                        note_text += `${timestamp(data.eew)}${(data.eq.time) ? `<br>(震後 ${((data.eew - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>中央氣象局 地震預警`;
                                     }
-                                    if (cwb_eew) cwb_release.style.backgroundColor = "red";
-                                    cwb_release.setAttribute("data-text", cwb_release.textContent);
+                                    if (data.note) {
+                                        if (data.note.rf && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.note.rf && !rf_eew) {
+                                            rf_eew = true;
+                                            note_text += `${timestamp(data.note.rf)}${(data.eq.time) ? `<br>(震後 ${((data.note.rf - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>RF-monitor 地震檢測`;
+                                        }
+                                        if (data.note.mrl && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.note.mrl && !mrl_eew) {
+                                            mrl_eew = true;
+                                            note_text += `${timestamp(data.note.mrl)}${(data.eq.time) ? `<br>(震後 ${((data.note.mrl- data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>美麗蓮 特快報`;
+                                        }
+                                    }
+                                    note.innerHTML = note_text;
+                                    note.setAttribute("data-text", note.textContent);
 
                                     const type = document.createElement("td");
                                     type.textContent = (data.trem.eew[i].model == "eew") ? "EEW" : "NSSPE";
@@ -531,7 +544,7 @@
                                         box.appendChild(cwb);
                                         box.appendChild(release_after);
                                         box.appendChild(alert_after);
-                                        box.appendChild(cwb_release);
+                                        box.appendChild(note);
                                     }
                                     frag_2.appendChild(box);
                                 }
