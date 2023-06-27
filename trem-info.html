@@ -590,11 +590,11 @@
                 ID.setAttribute("data-text", ID.textContent);
 
                 const composite = document.createElement("td");
-                composite.textContent = cache.trem.raw[num - 1].station[id];
+                composite.textContent = `${cache.trem.raw[num - 1].station[id]} gal`;
                 composite.setAttribute("data-text", composite.textContent);
 
                 const z = document.createElement("td");
-                z.textContent = cache.trem.raw[num - 1].z[id].toFixed(2);
+                z.textContent = `${cache.trem.raw[num - 1].z[id].toFixed(2)} gal`;
                 z.setAttribute("data-text", z.textContent);
 
                 const date = document.createElement("td");
