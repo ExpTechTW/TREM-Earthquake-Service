@@ -65,6 +65,7 @@
                     <th>深度</th>
                     <th>規模</th>
                     <th>最大預估震度</th>
+                    <th>精度</th>
                     <th>警報</th>
                     <th>達標(CWB)</th>
                     <th>震後</th>
@@ -480,7 +481,7 @@
 
                                     const time = document.createElement("td");
                                     time.textContent = (data.trem.eew[i].cancel) ? "取消" : timestamp(data.trem.eew[i].time);
-                                    if (data.trem.eew[i].cancel) time.colSpan = 12;
+                                    if (data.trem.eew[i].cancel) time.colSpan = 13;
                                     time.setAttribute("data-text", time.textContent);
 
                                     const loc = document.createElement("td");
@@ -509,6 +510,11 @@
                                     max.textContent = intensity_int_to_string(data.trem.eew[i].max);
                                     max.className = `intensity_${data.trem.eew[i].max}`;
                                     max.setAttribute("data-text", max.textContent);
+
+                                    const quality = document.createElement("td");
+                                    quality.textContent = (!data.trem.eew[i].quality) ? "無" : (data.trem.eew[i].quality == "low") ? "低" : (!data.trem.eew[i].quality == "middle") ? "中" : "高";
+                                    quality.setAttribute("data-text", quality.textContent);
+                                    quality.style.backgroundColor = (!data.trem.eew[i].quality) ? "grey" : (data.trem.eew[i].quality == "low") ? "red" : (!data.trem.eew[i].quality == "middle") ? "orange" : "green";;
 
                                     if (!Alert && data.trem.eew[i].max > 4) Alert = true
                                     const alert = document.createElement("td");
@@ -542,6 +548,7 @@
                                         box.appendChild(depth);
                                         box.appendChild(scale);
                                         box.appendChild(max);
+                                        box.appendChild(quality);
                                         box.appendChild(alert);
                                         box.appendChild(cwb);
                                         box.appendChild(release_after);
