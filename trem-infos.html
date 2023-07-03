@@ -190,7 +190,7 @@
 
                         const rts = document.createElement("td");
                         rts.textContent = (data[id].rts == undefined) ? "無" : (!data[id].rts) ? "否" : "是";
-                        rts.style.backgroundColor = (!data[id].rts) ? "grey" : "green";
+                        rts.style.backgroundColor = (data[id].rts == undefined) ? "grey" : (!data[id].rts) ? "red" : "green";
                         rts.setAttribute("data-text", rts.textContent);
 
                         const replay = document.createElement("td");

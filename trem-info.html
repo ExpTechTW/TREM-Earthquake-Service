@@ -519,7 +519,7 @@
                                     const rts = document.createElement("td");
                                     rts.textContent = (data.trem.eew[i].rts == undefined) ? "無" : (!data.trem.eew[i].rts) ? "否" : "是";
                                     rts.setAttribute("data-text", rts.textContent);
-                                    rts.style.backgroundColor = (!data.trem.eew[i].rts) ? "grey" : "green";
+                                    rts.style.backgroundColor = (data.trem.eew[i].rts == undefined) ? "grey" : (!data.trem.eew[i].rts) ? "red" : "green";
 
                                     if (!Alert && data.trem.eew[i].max > 4) Alert = true
                                     const alert = document.createElement("td");
