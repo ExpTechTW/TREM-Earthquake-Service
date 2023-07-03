@@ -210,8 +210,9 @@
                             time_eew.textContent = timestamp(data[id].eew);
                             time_eew.setAttribute("data-text", time_eew.textContent);
                         }
-                        if (data[id].error) {
-                            time_eew.textContent = "誤報";
+                        if (data[id].error || data[id].test) {
+                            time_eew.textContent = (data[id].error) ? "誤報" : "測試";
+                            time_eew.style.backgroundColor = (data[id].error) ? "red" : "blue";
                             time_eew.colSpan = 12;
                             time_eew.setAttribute("data-text", time_eew.textContent);
                         }
@@ -285,7 +286,7 @@
                         box.append(date);
                         box.appendChild(time_trem);
                         box.appendChild(time_eew);
-                        if (!data[id].error) {
+                        if (!data[id].error && !data[id].test) {
                             box.appendChild(target);
                             box.appendChild(max);
                             box.appendChild(no);

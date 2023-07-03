@@ -241,7 +241,7 @@
                         .then((res) => {
                             const data = res.data;
                             cache = data
-                            title.textContent = `${params.id}${(cache.error) ? " (誤報)" : ""}`;
+                            title.textContent = `${params.id}${(cache.error) ? " (誤報)" : (cache.test) ? " (測試)" : ""}`;
 
                             if (data.eq.no && data.eq.no != 111000) {
                                 const report_cwb = document.getElementById("report-cwb");
