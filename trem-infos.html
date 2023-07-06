@@ -22,6 +22,7 @@
         </div>
         <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ <b>檢知</b> 欄位顯示 <b>否</b> 表示為內部訊息 非公開
             軟體並未顯示</div>
+        <a id="show" style="color: lightskyblue;cursor: pointer;text-decoration:underline;"><b>顯示</b> 非公開紀錄</a>
         <table>
             <thead>
                 <tr>
@@ -153,6 +154,22 @@
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         const trem_table = document.getElementById("trem-table");
+        const show = document.getElementById("show");
+
+        let cache = {};
+        let show_state = false;
+
+        show.onclick = () => {
+            if (!show_state) {
+                show_state = true;
+                show.innerHTML = "<b>隱藏</b> 非公開紀錄";
+            } else {
+                show_state = false;
+                show.innerHTML = "<b>顯示</b> 非公開紀錄";
+            }
+
+            handle(cache);
+        }
 
         const timestamp = (ts, date = false, re = null) => {
             const t = new Date(ts);
@@ -179,131 +196,135 @@
         function load() {
             axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info?key=${params.key}`)
                 .then((res) => {
-                    const frag = new DocumentFragment();
-
-                    const data = res.data;
-                    for (let k = Object.keys(data), i = k.length - 1, id = k[i]; i >= 0; i--, id = k[i]) {
-                        const box = document.createElement("tr");
-                        const ID = document.createElement("td");
-                        ID.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem-info.html?id=${id}&key=${params.key}">${id}</a>`;
-                        ID.setAttribute("data-text", ID.textContent);
-
-                        const rts = document.createElement("td");
-                        rts.textContent = (data[id].rts == undefined) ? "無" : (!data[id].rts) ? "否" : "是";
-                        rts.style.backgroundColor = (data[id].rts == undefined) ? "grey" : (!data[id].rts) ? "red" : "green";
-                        rts.setAttribute("data-text", rts.textContent);
-
-                        const replay = document.createElement("td");
-                        replay.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem.html?time=${data[id].alert - 10000}">點擊</a>`;
-                        replay.setAttribute("data-text", replay.textContent);
-
-                        const date = document.createElement("td");
-                        date.textContent = timestamp(data[id].alert, true);
-                        date.setAttribute("data-text", date.textContent);
-
-                        const time_trem = document.createElement("td");
-                        time_trem.textContent = timestamp(data[id].alert);
-                        time_trem.setAttribute("data-text", time_trem.textContent);
-
-                        const time_eew = document.createElement("td");
-                        if (data[id].eew) {
-                            time_eew.textContent = timestamp(data[id].eew);
-                            time_eew.setAttribute("data-text", time_eew.textContent);
-                        }
-                        if (data[id].error || data[id].test) {
-                            time_eew.textContent = (data[id].error) ? "誤報" : "測試";
-                            time_eew.style.backgroundColor = (data[id].error) ? "red" : "blue";
-                            time_eew.colSpan = 12;
-                            time_eew.setAttribute("data-text", time_eew.textContent);
-                        }
-
-                        const target = document.createElement("td");
-                        target.textContent = data[id].target;
-                        target.setAttribute("data-text", target.textContent);
-
-                        const max = document.createElement("td");
-                        max.textContent = intensity_int_to_string(data[id].max);
-                        max.className = `intensity_${data[id].max}`;
-                        max.setAttribute("data-text", max.textContent);
-
-                        const no = document.createElement("td");
-                        const link = document.createElement("td");
-                        if (data[id].eq.no) {
-                            no.textContent = (data[id].eq.no == 111000) ? "TREM" : (!data[id].eq.no.toString().includes("000")) ? data[id].eq.no : "小區域";
-                            no.setAttribute("data-text", no.textContent);
-                            if (!data[id].eq.no.toString().includes("000")) no.style.backgroundColor = "goldenrod";
-                            if (data[id].eq.no != 111000) {
-                                const originTime = new Date(data[id].eq.time);
-                                const cwb_code = "EQ"
-                                    + data[id].eq.no
-                                    + "-"
-                                    + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
-                                    + (originTime.getDate() < 10 ? "0" : "") + originTime.getDate()
-                                    + "-"
-                                    + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
-                                    + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
-                                    + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
-                                link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`;
-                                link.setAttribute("data-text", link.textContent);
-                            }
-                        }
-
-                        const time = document.createElement("td");
-                        if (data[id].eq.time) {
-                            time.textContent = timestamp(data[id].eq.time).replace(".000", "");
-                            time.setAttribute("data-text", time.textContent);
-                        }
-
-                        const loc = document.createElement("td");
-                        loc.textContent = data[id].eq.loc;
-                        loc.setAttribute("data-text", loc.textContent);
-                        if (data[id].eq.loc)
-                            if (data[id].eq.loc.includes("海")) loc.style.backgroundColor = "darkblue";
-                            else loc.style.backgroundColor = "darkgreen";
-
-                        const lat = document.createElement("td");
-                        lat.textContent = data[id].eq.lat;
-                        lat.setAttribute("data-text", lat.textContent);
-
-                        const lon = document.createElement("td");
-                        lon.textContent = data[id].eq.lon;
-                        lon.setAttribute("data-text", lon.textContent);
-
-                        const depth = document.createElement("td");
-                        if (data[id].eq.depth) {
-                            depth.textContent = `${data[id].eq.depth} ㎞`;
-                            depth.setAttribute("data-text", depth.textContent);
-                        }
-
-                        const scale = document.createElement("td");
-                        if (data[id].eq.scale) {
-                            scale.textContent = `M ${data[id].eq.scale.toFixed(1)}`;
-                            scale.setAttribute("data-text", scale.textContent);
-                        }
-
-                        box.appendChild(ID);
-                        box.appendChild(rts);
-                        box.append(date);
-                        box.appendChild(time_trem);
-                        box.appendChild(time_eew);
-                        if (!data[id].error && !data[id].test) {
-                            box.appendChild(target);
-                            box.appendChild(max);
-                            box.appendChild(no);
-                            box.appendChild(time);
-                            box.appendChild(loc);
-                            box.appendChild(lat);
-                            box.appendChild(lon);
-                            box.appendChild(depth);
-                            box.appendChild(scale);
-                            box.appendChild(replay);
-                            box.appendChild(link);
-                        }
-                        frag.appendChild(box);
-                    }
-
-                    trem_table.replaceChildren(frag);
+                    cache = res.data;
+                    handle(cache);
                 })
+        }
+
+        function handle(data) {
+            const frag = new DocumentFragment();
+            for (let k = Object.keys(data), i = k.length - 1, id = k[i]; i >= 0; i--, id = k[i]) {
+                if (!show_state && !data[id].rts) continue;
+                const box = document.createElement("tr");
+                const ID = document.createElement("td");
+                ID.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem-info.html?id=${id}&key=${params.key}">${id}</a>`;
+                ID.setAttribute("data-text", ID.textContent);
+
+                const rts = document.createElement("td");
+                rts.textContent = (data[id].rts == undefined) ? "無" : (!data[id].rts) ? "否" : "是";
+                rts.style.backgroundColor = (data[id].rts == undefined) ? "grey" : (!data[id].rts) ? "red" : "green";
+                rts.setAttribute("data-text", rts.textContent);
+
+                const replay = document.createElement("td");
+                replay.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem.html?time=${data[id].alert - 10000}">點擊</a>`;
+                replay.setAttribute("data-text", replay.textContent);
+
+                const date = document.createElement("td");
+                date.textContent = timestamp(data[id].alert, true);
+                date.setAttribute("data-text", date.textContent);
+
+                const time_trem = document.createElement("td");
+                time_trem.textContent = timestamp(data[id].alert);
+                time_trem.setAttribute("data-text", time_trem.textContent);
+
+                const time_eew = document.createElement("td");
+                if (data[id].eew) {
+                    time_eew.textContent = timestamp(data[id].eew);
+                    time_eew.setAttribute("data-text", time_eew.textContent);
+                }
+                if (data[id].error || data[id].test) {
+                    time_eew.textContent = (data[id].error) ? "誤報" : "測試";
+                    time_eew.style.backgroundColor = (data[id].error) ? "red" : "blue";
+                    time_eew.colSpan = 12;
+                    time_eew.setAttribute("data-text", time_eew.textContent);
+                }
+
+                const target = document.createElement("td");
+                target.textContent = data[id].target;
+                target.setAttribute("data-text", target.textContent);
+
+                const max = document.createElement("td");
+                max.textContent = intensity_int_to_string(data[id].max);
+                max.className = `intensity_${data[id].max}`;
+                max.setAttribute("data-text", max.textContent);
+
+                const no = document.createElement("td");
+                const link = document.createElement("td");
+                if (data[id].eq.no) {
+                    no.textContent = (data[id].eq.no == 111000) ? "TREM" : (!data[id].eq.no.toString().includes("000")) ? data[id].eq.no : "小區域";
+                    no.setAttribute("data-text", no.textContent);
+                    if (!data[id].eq.no.toString().includes("000")) no.style.backgroundColor = "goldenrod";
+                    if (data[id].eq.no != 111000) {
+                        const originTime = new Date(data[id].eq.time);
+                        const cwb_code = "EQ"
+                            + data[id].eq.no
+                            + "-"
+                            + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
+                            + (originTime.getDate() < 10 ? "0" : "") + originTime.getDate()
+                            + "-"
+                            + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
+                            + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
+                            + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
+                        link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`;
+                        link.setAttribute("data-text", link.textContent);
+                    }
+                }
+
+                const time = document.createElement("td");
+                if (data[id].eq.time) {
+                    time.textContent = timestamp(data[id].eq.time).replace(".000", "");
+                    time.setAttribute("data-text", time.textContent);
+                }
+
+                const loc = document.createElement("td");
+                loc.textContent = data[id].eq.loc;
+                loc.setAttribute("data-text", loc.textContent);
+                if (data[id].eq.loc)
+                    if (data[id].eq.loc.includes("海")) loc.style.backgroundColor = "darkblue";
+                    else loc.style.backgroundColor = "darkgreen";
+
+                const lat = document.createElement("td");
+                lat.textContent = data[id].eq.lat;
+                lat.setAttribute("data-text", lat.textContent);
+
+                const lon = document.createElement("td");
+                lon.textContent = data[id].eq.lon;
+                lon.setAttribute("data-text", lon.textContent);
+
+                const depth = document.createElement("td");
+                if (data[id].eq.depth) {
+                    depth.textContent = `${data[id].eq.depth} ㎞`;
+                    depth.setAttribute("data-text", depth.textContent);
+                }
+
+                const scale = document.createElement("td");
+                if (data[id].eq.scale) {
+                    scale.textContent = `M ${data[id].eq.scale.toFixed(1)}`;
+                    scale.setAttribute("data-text", scale.textContent);
+                }
+
+                box.appendChild(ID);
+                box.appendChild(rts);
+                box.append(date);
+                box.appendChild(time_trem);
+                box.appendChild(time_eew);
+                if (!data[id].error && !data[id].test) {
+                    box.appendChild(target);
+                    box.appendChild(max);
+                    box.appendChild(no);
+                    box.appendChild(time);
+                    box.appendChild(loc);
+                    box.appendChild(lat);
+                    box.appendChild(lon);
+                    box.appendChild(depth);
+                    box.appendChild(scale);
+                    box.appendChild(replay);
+                    box.appendChild(link);
+                }
+                frag.appendChild(box);
+            }
+
+            trem_table.replaceChildren(frag);
         }
 
         function intensity_int_to_string(int) {
