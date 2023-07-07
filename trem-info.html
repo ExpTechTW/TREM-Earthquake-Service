@@ -276,24 +276,24 @@
                                 loc.setAttribute("data-text", loc.textContent);
 
                                 const x = document.createElement("td");
-                                x.textContent = data.station[i].x;
+                                x.textContent = data.station[i].x.toFixed(4);
                                 x.setAttribute("data-text", x.textContent);
 
                                 const y = document.createElement("td");
-                                y.textContent = data.station[i].y;
+                                y.textContent = data.station[i].y.toFixed(4);
                                 y.setAttribute("data-text", y.textContent);
 
                                 const z = document.createElement("td");
-                                z.textContent = data.station[i].z;
+                                z.textContent = data.station[i].z.toFixed(4);
                                 z.setAttribute("data-text", z.textContent);
 
                                 const pga = document.createElement("td");
-                                pga.textContent = `${data.station[i].pga} gal`;
+                                pga.textContent = `${data.station[i].pga.toFixed(2)} gal`;
                                 pga.setAttribute("data-text", pga.textContent);
                                 pga_list.push(data.station[i].pga);
 
                                 const pgv = document.createElement("td");
-                                pgv.textContent = `${data.station[i].pgv} kine`;
+                                pgv.textContent = `${data.station[i].pgv.toFixed(2)} kine`;
                                 pgv.setAttribute("data-text", pgv.textContent);
 
                                 const intensity = document.createElement("td");
@@ -491,11 +491,11 @@
                                     else loc.style.backgroundColor = "darkgreen";
 
                                     const lat = document.createElement("td");
-                                    lat.textContent = data.trem.eew[i].lat;
+                                    lat.textContent = (data.trem.eew[i].lat) ? data.trem.eew[i].lat.toFixed(2) : "";
                                     lat.setAttribute("data-text", lat.textContent);
 
                                     const lon = document.createElement("td");
-                                    lon.textContent = data.trem.eew[i].lon;
+                                    lon.textContent = (data.trem.eew[i].lon) ? data.trem.eew[i].lon.toFixed(2) : "";
                                     lon.setAttribute("data-text", lon.textContent);
 
                                     const depth = document.createElement("td");

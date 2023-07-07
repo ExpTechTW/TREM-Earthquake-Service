@@ -284,16 +284,16 @@
                     else loc.style.backgroundColor = "darkgreen";
 
                 const lat = document.createElement("td");
-                lat.textContent = data[id].eq.lat;
+                lat.textContent = (data[id].eq.lat) ? data[id].eq.lat.toFixed(2) : "";
                 lat.setAttribute("data-text", lat.textContent);
 
                 const lon = document.createElement("td");
-                lon.textContent = data[id].eq.lon;
+                lon.textContent = (data[id].eq.lon) ? data[id].eq.lon.toFixed(2) : "";
                 lon.setAttribute("data-text", lon.textContent);
 
                 const depth = document.createElement("td");
                 if (data[id].eq.depth) {
-                    depth.textContent = `${data[id].eq.depth} ㎞`;
+                    depth.textContent = `${data[id].eq.depth.toFixed(1)} ㎞`;
                     depth.setAttribute("data-text", depth.textContent);
                 }
 
