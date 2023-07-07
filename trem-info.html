@@ -85,6 +85,8 @@
                     <th>日期</th>
                     <th>P(自動)</th>
                     <th>S(自動)</th>
+                    <th>震央距</th>
+                    <th>視規模</th>
                 </tr>
             </thead>
             <tbody id="raw-table"></tbody>
@@ -210,6 +212,8 @@
         const ctx = document.getElementById('myChart');
 
         back.href = `https://exptech.com.tw/api/v1/file/trem-infos.html?key=${params.key}`;
+        let station_data;
+        let data;
 
         const timestamp = (ts, date = false, re = null) => {
             const t = new Date(ts);
@@ -235,11 +239,11 @@
 
         function load() {
             axios.get("https://exptech.com.tw/api/v1/file/resource/station.json")
-                .then((station_data) => {
-                    station_data = station_data.data;
+                .then((_station_data) => {
+                    station_data = _station_data.data;
                     axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}?key=${params.key}`)
                         .then((res) => {
-                            const data = res.data;
+                            data = res.data;
                             cache = data
                             title.textContent = `${params.id}${(cache.error) ? " (誤報)" : (cache.test) ? " (測試)" : ""}`;
 
@@ -334,7 +338,7 @@
                                 const theory_pga = document.createElement("td");
 
                                 if (station_data[uuid] && data.eq.depth) {
-                                    const theory_dist_surface = Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101));
+                                    const theory_dist_surface = Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[uuid].Long) * 101));
                                     const theory_dist = Math.sqrt(pow(theory_dist_surface) + pow(data.eq.depth));
 
                                     theory_p.textContent = timestamp((theory_dist / 6.5) * 1000 + data.eq.time);
@@ -342,8 +346,8 @@
                                     theory_s.textContent = timestamp((theory_dist / 3.5) * 1000 + data.eq.time);
                                     theory_s.setAttribute("data-text", theory_s.textContent);
 
-                                    const dist_surface = Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[data.station[i].uuid].Long) * 101));
-                                    dist.textContent = (data.eq.lat && data.eq.lon) ? `${dist_surface.toFixed(2)} km` : "";
+                                    const dist_surface = Math.sqrt(pow((data.eq.lat - station_data[uuid].Lat) * 111) + pow((data.eq.lon - station_data[uuid].Long) * 101));
+                                    dist.textContent = `${dist_surface.toFixed(2)} km`;
                                     dist.setAttribute("data-text", dist.textContent);
 
                                     const theory_pga_num = (1.657 * Math.pow(Math.E, (1.533 * data.eq.scale)) * Math.pow(Math.sqrt(pow(dist_surface) + pow(data.eq.depth)), -1.607)).toFixed(2);
@@ -603,7 +607,7 @@
                 ID.setAttribute("data-text", ID.textContent);
 
                 const composite = document.createElement("td");
-                composite.textContent = `${cache.trem.raw[num - 1].station[id]} gal`;
+                composite.textContent = `${cache.trem.raw[num - 1].station[id].toFixed(2)} gal`;
                 composite.setAttribute("data-text", composite.textContent);
 
                 const z = document.createElement("td");
@@ -615,12 +619,29 @@
                 date.setAttribute("data-text", date.textContent);
 
                 const p = document.createElement("td");
-                p.textContent = (cache.trem.raw[num - 1].time[id] == cache.trem.raw[num - 1].s_time[id]) ? "" : timestamp(cache.trem.raw[num - 1].time[id]);
+                p.textContent = timestamp(cache.trem.raw[num - 1].time[id]);
+                if (id.startsWith("H") && cache.trem.raw[num - 1].z[id] < 0.5 || cache.trem.raw[num - 1].s_time[id] == cache.trem.raw[num - 1].time[id]) p.style.backgroundColor = "red";
                 p.setAttribute("data-text", p.textContent);
 
                 const s = document.createElement("td");
                 s.textContent = timestamp(cache.trem.raw[num - 1].s_time[id]);
                 s.setAttribute("data-text", s.textContent);
+
+                const dist = document.createElement("td");
+                const m = document.createElement("td");
+
+                if (station_data[id] && data.eq.depth) {
+                    const dist_surface = Math.sqrt(pow((data.eq.lat - station_data[id].Lat) * 111) + pow((data.eq.lon - station_data[id].Long) * 101));
+                    dist.textContent = `${dist_surface.toFixed(2)} km`;
+                    dist.setAttribute("data-text", dist.textContent);
+
+                    const _dist = Math.sqrt(pow(data.eq.depth) + pow(dist_surface));
+
+                    const scale = -0.65 + 1.457 * Math.log10(cache.trem.raw[num - 1].z[id]) + 3.026 * Math.log10(_dist);
+                    m.textContent = `M ${scale.toFixed(1)}`;
+                    if (id.startsWith("L") && cache.trem.raw[num - 1].z[id] < 1.55) m.style.backgroundColor = "red";
+                    m.setAttribute("data-text", m.textContent);
+                }
 
                 box.appendChild(ID);
                 box.appendChild(composite);
@@ -628,6 +649,8 @@
                 box.appendChild(date);
                 box.appendChild(p);
                 box.appendChild(s);
+                box.appendChild(dist);
+                box.appendChild(m);
                 frag.appendChild(box);
             }
 
