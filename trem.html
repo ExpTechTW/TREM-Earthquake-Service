@@ -135,7 +135,10 @@
         const s = document.getElementById("switch");
         const control = document.getElementById("control");
         const t = document.getElementById("time");
-        if (time) t.style.color = "yellow";
+        if (time) {
+            t.style.color = "yellow";
+            last.disabled = false;
+        }
 
         const eew_info = document.getElementById("eew-info");
         const eew_time = document.getElementById("eew-time");
@@ -232,11 +235,7 @@
         const updateImage = () => { image.src = `${image.src.split("?")[0]}?v=${Date.now()}${(time) ? `&time=${time}` : ""}`; }
         const updateInfo = () => {
             axios.get(`https://exptech.com.tw/api/v1/earthquake/info?time=${(!time) ? 0 : Math.floor(time / 1000)}`)
-                .then(res => {
-                    info_data = res.data;
-                    console.log(res.data)
-                    console.log(time_string(res.data.time * 1000))
-                })
+                .then(res => info_data = res.data)
                 .catch(err => console.error(err));
         }
         setInterval(() => {
