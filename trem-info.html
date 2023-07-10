@@ -22,6 +22,7 @@
         <div id="ID" style="color: white;font-size: 40px;font-weight: 900;"></div>
         <div style="display: grid;">
             <a id="old" style="color: lightskyblue;">舊版頁面</a>
+            <a id="replay" style="color: lightskyblue;">網頁重播</a>
             <a id="report-cwb" style="color: lightskyblue;display: none;">地震報告(CWB)</a>
         </div>
         <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ 此頁面所有資料均來自 TREM 結果請依 <b>中央氣象局(CWB)</b> 發布之內容為準
@@ -249,6 +250,8 @@
                             data = res.data;
                             cache = data
                             title.textContent = `${params.id}${(cache.error) ? " (誤報)" : (cache.test) ? " (測試)" : ""}`;
+
+                            document.getElementById("replay").href = `https://exptech.com.tw/api/v1/file/trem.html?time=${data.alert - 10000}`;
 
                             if (data.eq.no && data.eq.no != 111000) {
                                 const report_cwb = document.getElementById("report-cwb");
