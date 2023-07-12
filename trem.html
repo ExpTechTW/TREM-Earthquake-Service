@@ -23,19 +23,36 @@
             <img src="https://exptech.com.tw/api/v1/trem/rts-image?v=0" id="img" class="img">
         </div>
         <div id="eew-info" class="info">
-            <div>
-                <a id="eew-time"></a>
-                <a id="eew-number"></a>
-                <a id="eew-loc"></a>
+            <div style="display: flex;">
+                <div class="text-box">
+                    <div class="text-title" id="eew-time"></div>
+                </div>
+                <div class="text-box">
+                    <div class="text-title">第</div>
+                    <div class="text-body" id="eew-number" style="padding-left: 0px;"></div>
+                    <div class="text-title">報</div>
+                </div>
+                <div class="text-box">
+                    <div class="text-title" id="eew-loc"></div>
+                </div>
             </div>
-            <div>
-                <a id="eew-scale"></a>
-                <a id="eew-depth"></a>
-                <a id="eew-max"></a>
+            <div style="display: flex;">
+                <div class="text-box">
+                    <div class="text-title">M</div>
+                    <div class="text-body" id="eew-scale"></div>
+                </div>
+                <div class="text-box">
+                    <div class="text-title">深度</div>
+                    <div class="text-body" id="eew-depth"></div>
+                </div>
+                <div class="text-box">
+                    <div class="text-title">最大預估震度</div>
+                    <div class="text-body" id="eew-max"></div>
+                </div>
             </div>
         </div>
         <div class="control">
-            <a id="time" class="subtitle">----/--/-- --:--:--</a>
+            <a id="time" class="subtitle">---- / -- / -- -- : -- : --</a>
             <div>
                 <input id="control" type="range" min="0" max="86400" step="1" value="86400" style="width: 500px;">
             </div>
@@ -106,21 +123,40 @@
             top: 645px;
             border: 2px solid white;
             border-radius: 5px;
-            padding: 3px;
-            font-size: 20px;
-            height: 50px;
-            width: 450px;
+            padding: 10px;
+            height: 65px;
+            width: 350px;
+            display: grid;
+            align-items: center;
         }
 
         .control {
             position: absolute;
             left: 10px;
-            top: 715px;
+            top: 740px;
+        }
+
+        .text-box {
+            display: flex;
+            padding-left: 5px;
+            align-items: center;
+        }
+
+        .text-title {
+            font-size: 18px;
+        }
+
+        .text-body {
+            font-size: 24px;
+            font-weight: 600;
+            padding-left: 5px;
         }
     </style>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
     <script>
+        for (const item of document.getElementsByClassName("text-title"))
+            item.style.display = "none";
+
         let time = 0;
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
@@ -234,8 +270,8 @@
 
         const updateImage = () => { image.src = `${image.src.split("?")[0]}?v=${Date.now()}${(time) ? `&time=${time}` : ""}`; }
         const updateInfo = () => {
-            axios.get(`https://exptech.com.tw/api/v1/earthquake/info?time=${(!time) ? 0 : Math.floor(time / 1000)}`)
-                .then(res => info_data = res.data)
+            fetch(`https://exptech.com.tw/api/v1/earthquake/info?time=${(!time) ? 0 : Math.floor(time / 1000)}`)
+                .then(async res => info_data = await res.json())
                 .catch(err => console.error(err));
         }
         setInterval(() => {
@@ -259,15 +295,17 @@
                     if (audio_state) audio_alert.play();
                 }
                 eew_time.textContent = time_string(info_data.eew.time);
-                eew_number.textContent = `第${info_data.eew.number}報`;
+                eew_number.textContent = info_data.eew.number;
                 eew_loc.textContent = info_data.eew.location;
-                eew_scale.textContent = `M${info_data.eew.scale}`;
-                eew_depth.textContent = `深度${info_data.eew.depth}km`;
-                eew_max.textContent = `最大預估震度 ${(info_data.eew.max == undefined) ? "未知" : Intensity[info_data.eew.max].text}`;
+                eew_scale.textContent = info_data.eew.scale;
+                eew_depth.textContent = `${info_data.eew.depth}km`;
+                eew_max.textContent = (info_data.eew.max == undefined) ? "未知" : Intensity[info_data.eew.max].text;
                 if (info_data.eew.max != undefined) {
                     eew_info.style.color = "yellow";
                     if (info_data.eew.max > 4) eew_info.style.color = "red";
                 }
+                for (const item of document.getElementsByClassName("text-title"))
+                    item.style.display = "";
             } else {
                 eew_time.textContent = "";
                 eew_number.textContent = "";
@@ -276,6 +314,8 @@
                 eew_depth.textContent = "";
                 eew_max.textContent = "";
                 eew_alert = false;
+                for (const item of document.getElementsByClassName("text-title"))
+                    item.style.display = "none";
             }
         }, 1000);
     </script>
