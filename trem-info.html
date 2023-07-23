@@ -6,7 +6,7 @@
     <meta content="TREM Earthquake History" property="og:title" />
     <meta content="TREM Earthquake History | TREM 地震預警紀錄" property="og:description" />
     <meta content="https://exptechtw.github.io/" property="og:url" />
-    <meta content="https://raw.githubusercontent.com/ExpTechTW/ExpTechTW.github.io/master/image/main/ExpTech.jpg"
+    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png"
         property="og:image" />
 </head>
 
@@ -242,7 +242,7 @@
         load();
 
         function load() {
-            axios.get("https://exptech.com.tw/api/v1/file/resource/station.json")
+            axios.get("https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/Json/earthquake/station.json")
                 .then((_station_data) => {
                     station_data = _station_data.data;
                     axios.get(`https://exptech.com.tw/api/v1/earthquake/trem-info/${params.id}?key=${params.key}`)

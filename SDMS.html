@@ -1,0 +1,238 @@
+<html lang="zh-Hant">
+
+<head>
+    <title id="title">TREM SDMS</title>
+    <meta charset="utf-8" />
+    <meta content="TREM SDMS" property="og:title" />
+    <meta content="Seismic Data Management System | 地震資料管理系統" property="og:description" />
+    <meta content="https://exptechtw.github.io/" property="og:url" />
+    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png"
+        property="og:image" />
+</head>
+
+<body style="background-color: #333439;">
+    <div class="main">
+        <div class="body">
+            <div class="title">Seismic Data Management System</div>
+            <div class="subtitle">地震資料管理系統</div>
+            <div class="stations_box">
+                <div class="stations_title">測站代碼</div>
+                <select class="stations_text" id="stations"></select>
+            </div>
+            <div class="time">
+                <div class="start_box">
+                    <div class="start_title">起始時間</div>
+                    <input class="start_text" id="start" type="text">
+                </div>
+                <div class="end_box">
+                    <div class="end_title">結束時間</div>
+                    <input class="end_text" id="end" type="text">
+                </div>
+            </div>
+            <div class="button_box">
+                <button class="button_text" id="button" type="button" onclick="download()">下載</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .main {
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            display: grid;
+            justify-items: center;
+            color: white;
+        }
+
+        .body {
+            text-align: center;
+            padding: 4%;
+            border: 3px solid black;
+            border-radius: 5px;
+            background-color: #535353;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .stations_box {
+            padding: 2%;
+        }
+
+        .stations_title {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .stations_text {
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            background-color: #333439;
+            border: 1px solid black;
+            outline: none;
+        }
+
+        .time {
+            display: flex;
+        }
+
+        .start_box {
+            padding: 1%;
+            width: 50%;
+        }
+
+        .start_title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .start_text {
+            border-radius: 5px;
+            width: 80%;
+            text-align: center;
+            color: white;
+            background-color: #333439;
+            border: 1px solid black;
+            outline: none;
+        }
+
+        .end_box {
+            padding: 1%;
+            width: 50%;
+        }
+
+        .end_title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .end_text {
+            border-radius: 5px;
+            width: 80%;
+            text-align: center;
+            color: white;
+            background-color: #333439;
+            border: 1px solid black;
+            outline: none;
+        }
+
+        .button_box {
+            padding: 1%;
+            align-items: center;
+        }
+
+        .button_text {
+            color: white;
+            background-color: #333439;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 2%;
+            padding: 1%;
+            width: 60%;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
+    <script>
+        let utc = new Date();
+        let NOW = new Date(utc.getTime() + utc.getTimezoneOffset() * 60 * 1000 + 3600 * 8 * 1000);
+        const now = new Date(NOW.getTime() - 310000);
+        const Now = now.getFullYear() +
+            "-" + (now.getMonth() + 1) +
+            "-" + now.getDate() +
+            " " + now.getHours() +
+            ":" + now.getMinutes() +
+            ":" + now.getSeconds();
+        const now1 = new Date(NOW.getTime() - 10000);
+        const Now1 = now1.getFullYear() +
+            "-" + (now1.getMonth() + 1) +
+            "-" + now1.getDate() +
+            " " + now1.getHours() +
+            ":" + now1.getMinutes() +
+            ":" + now1.getSeconds();
+
+        const _stations = document.getElementById("stations");
+        const _button = document.getElementById("button");
+        const _start = document.getElementById("start");
+        const _end = document.getElementById("end");
+        _start.value = Now;
+        _end.value = Now1;
+        axios.get("https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/Json/earthquake/station.json")
+            .then((res) => {
+                const data = res.data;
+                for (let i = 0; i < Object.keys(data).length; i++) {
+                    const station = Object.keys(data)[i];
+                    const opt_station = document.createElement("option");
+                    opt_station.value = station;
+                    opt_station.innerHTML = `${station} ${data[station].Loc}`;
+                    stations.appendChild(opt_station);
+                }
+            })
+
+        function download() {
+            _button.disabled = true;
+            _button.textContent = "正在準備檔案...";
+            _stations.disabled = true;
+            _start.disabled = true;
+            _end.disabled = true;
+            axios.get(`https://exptech.com.tw/api/v1/trem/waveform?station=${_stations.value}&start=${convertDate(_start.value).getTime()}&end=${convertDate(_end.value).getTime()}`)
+                .then((res) => {
+                    console.log(res.data);
+                    file(res.data);
+                }).catch((err) => {
+                    console.error(err);
+                    exit();
+                    const res = err.request.response;
+                    if (res == "End Time Error") alert("結束時間 錯誤!");
+                    else if (res == "Can Not Found File") alert("起始時間 錯誤!");
+                    else if (res == "Unknown Error, please report to the Developer (data-waveform)") alert("未知錯誤!");
+                    else if (res == "Can Not Found File") alert("起始時間 錯誤!");
+                    else if (res == "Time Too Long") alert("時間段過長!");
+                    else if (res == "Time Error") alert("時間 錯誤!");
+                })
+        }
+
+        function convertDate(date) {
+            const arr = date.split(/[- :]/);
+            return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
+        }
+
+        function file(file) {
+            axios({
+                url: `https://exptech.com.tw/api/v1/file?path=/Download/${file}.zip`,
+                method: 'GET',
+                responseType: 'blob'
+            }).then((res) => {
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(new Blob([res.data]));
+                link.setAttribute('download', `${_stations.value}_${_start.value}_${_end.value}.zip`);
+                document.body.appendChild(link);
+                link.click();
+                exit();
+            }).catch((err) => {
+                console.error(err);
+                exit();
+                alert("下載 錯誤!");
+            })
+        }
+
+        function exit() {
+            _button.textContent = "下載";
+            _stations.disabled = false;
+            _start.disabled = false;
+            _end.disabled = false;
+            _button.disabled = false;
+        }
+    </script>
+</body>
+
+</html>

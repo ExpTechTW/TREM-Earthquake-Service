@@ -7,8 +7,7 @@
   <meta content="TREM 即時強震觀測網" property="og:title" />
   <meta content="Taiwan Real-time Earthquake Monitoring ( 臺灣即時地震監測 )" property="og:description" />
   <meta content="https://exptechtw.github.io/" property="og:url" />
-  <meta content="https://raw.githubusercontent.com/ExpTechTW/ExpTechTW.github.io/master/image/main/ExpTech.jpg"
-    property="og:image" />
+  <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png" property="og:image" />
 </head>
 
 <body>
@@ -25,9 +24,9 @@
     <div class="container">
       <div class="map-wrapper">
         <div class="map-container">
-          <object data="https://exptech.com.tw/api/v1/file/resource/taiwan.png" class="map-image"
+          <object data="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/taiwan.png" class="map-image"
             type="image/png"></object>
-          <object data="https://exptech.com.tw/api/v1/file/resource/int.png" class="map-image"
+          <object data="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/int.png" class="map-image"
             type="image/png"></object>
           <object data="https://exptech.com.tw/api/v1/trem/rts-image?v=0" id="img" class="map-image"
             type="image/png"></object>
@@ -79,10 +78,10 @@
       </div>
     </div>
     <audio id="audio_warn">
-      <source src="https://exptech.com.tw/api/v1/file/resource/warn.mp3" type="audio/mpeg" />
+      <source src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/warn.mp3" type="audio/mpeg" />
     </audio>
     <audio id="audio_alert">
-      <source src="https://exptech.com.tw/api/v1/file/resource/alert.mp3" type="audio/mpeg" />
+      <source src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/alert.mp3" type="audio/mpeg" />
     </audio>
   </div>
 
@@ -362,10 +361,10 @@
       if (!lock) {
         timeline.value = 86400 - (!time ? 0 : (Date.now() - time) / 1000);
         t.textContent = `${time_string(!time ? Date.now() : time)} (${t.style.color == "yellow"
-            ? "重播"
-            : t.style.color == "red"
-              ? "暫停"
-              : "即時"
+          ? "重播"
+          : t.style.color == "red"
+            ? "暫停"
+            : "即時"
           })`;
       }
       if (!state) return;
