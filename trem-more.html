@@ -1,24 +1,243 @@
 <html lang="zh-Hant">
 
 <head>
-    <title id="title">TREM Question</title>
+    <title id="title">TREM Info</title>
     <meta charset="utf-8" />
-    <meta content="TREM Question" property="og:title" />
-    <meta content="TREM Question | 關於" property="og:description" />
+    <meta content="TREM Info" property="og:title" />
+    <meta content="TREM Info | 關於" property="og:description" />
     <meta content="https://exptechtw.github.io/" property="og:url" />
-    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png"
-        property="og:image" />
+    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png" property="og:image" />
 </head>
 
-<body style="background-color: #333439;">
+<body>
     <div class="main">
-        <a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem-infos.html">TREM Earthquake
-            History</a>
+        <div style="padding: 10px;">
+            <div class="title">ExpTech Studio </div>
+            <div class="subtitle">編程、設計、創意、實用</div>
+            <div class="subtitle">Taiwan 臺灣</div>
+        </div>
+        <div class="info-box">
+            <div class="info-title">TOS 服務條款</div>
+            <div class="info-body">
+                1. 通過使用服務 用戶被視為已<a class="info-note">同意使用條款</a><br>
+                2. <a class="info-note">禁止未經允許的再分發</a> (開發團隊知情且允許的情況 不受此規範限制)<br>
+                3. 禁止轉售 TREM 提供之資訊<br>
+                4. 禁止違反法律法規或違反公共秩序和道德的行為<br>
+                5. 任何資訊均以 <a class="info-note">中央氣象局(CWB)</a> 發布之內容為準<br>
+                6. 除以上條款外 任何開發團隊合理認為不適當的行為均不被允許<br>
+            </div>
+            <div class="info-end">ExpTech Studio | 2023年07月24日 初稿</div>
+        </div>
+        <div class="info-box">
+            <img height="700px" width="500px"
+                src="https://cdn.discordapp.com/attachments/867714897935990834/1132818718641115248/IMG_20230724_013101.jpg" />
+        </div>
+        <div class="info-box">
+            <div class="info-title">Q&A 常見問題</div>
+            <div class="info-body">
+                Q: 什麼是 <b>計測震度</b> 為什麼有負數?<br>
+                A: 我們常說的 1級 2級 3級 4級 5弱 5強 6弱 6強 7級 為 <b>震度階</b>，是 <b>計測震度</b> 轉換後的結果，使用 <b>計測震度</b>
+                可以反映出微小地震引起的變化<br>公式(設 計測震度 為 X)<br>[X < 0 | 0級] [X < 4.5 | (X四捨五入)級] [X < 5 | 5弱] [X < 5.5 | 5強] [x
+                    < 6 | 6弱] [X < 6.5 | 6強] 若上述條件都不成立則為 7級 </div>
+                    <div class="info-body">
+                        Q: 什麼是 P波、S波?<br>
+                        A: 地震發生時因 干涉 或 疊加 會產生 P波 S波 兩種震動波，P波(上下) 傳遞速度較快 破壞力較小，S波(前後左右) 傳遞速度較慢 破壞力大 通常是導致災害的的關鍵</div>
+            </div>
+        </div>
+        <div class="info-box">
+            <div class="info-title">Link 連結</div>
+            <div style="display: flex;">
+                <div class="link" onclick="link('github.com/ExpTechTW')">
+                    <div class="link-text">GitHub</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+                <div class="link" onclick="link('www.youtube.com/@exptech5327')">
+                    <div class="link-text">YouTube</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+            </div>
+            <div style="display: flex;">
+                <div class="link" onclick="link('discord.gg/5dbHqV8ees')">
+                    <div class="link-text">Discord</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+                <div class="link" onclick="link('twitter.com/ExpTech_TREM')">
+                    <div class="link-text">Twitter</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+            </div>
+            <div style="display: flex;">
+                <div class="link" onclick="link('exptech.com.tw/trem')">
+                    <div class="link-text">線上展示</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+                <div class="link" onclick="link('exptech.com.tw/api/v1/file/trem-infos.html')">
+                    <div class="link-text">預警紀錄</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+            </div>
+            <div style="display: flex;">
+                <div class="link"
+                    onclick="link('docs.google.com/document/d/1MqWsmerVQs6VM-cJEG7ImtVlhCcEY7jRh8dVn0BscL0/view?rm=minimal')">
+                    <div class="link-text">相關說明</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+                <div class="link" onclick="link('www.google.com/maps/d/u/0/edit?mid=10dQPSTv3TN7Q0u-3CYnPf35JTeL_tDc')">
+                    <div class="link-text">測站列表</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+            </div>
+            <div style="display: flex;">
+                <div class="link" onclick="link('stats.uptimerobot.com/KElQPHqKVk')">
+                    <div class="link-text">伺服器狀態</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+                <div class="link" onclick="link('exptech.com.tw/api/v1/file/status/index.html')">
+                    <div class="link-text">伺服器流量</div>
+                    <svg width="25px" height="25px" fill="currentColor" class="bi bi-arrow-right-square"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
     </div>
 
     <style>
-        
+        @import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
+
+        html,
+        body {
+            font-family: "cwTeXYen", sans-serif;
+            user-select: none;
+            background-color: #333439;
+            color: white;
+        }
+
+        .title {
+            font-size: 45px;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-size: 30px;
+            font-weight: 300;
+        }
+
+        .info-box {
+            border: 2px solid white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px;
+        }
+
+        .link {
+            display: flex;
+            font-size: 24px;
+            align-items: center;
+            border: 0.5px solid gray;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: fit-content;
+        }
+
+        .link:hover {
+            background-color: black;
+        }
+
+        .link-text {
+            padding-right: 5px;
+        }
+
+        .info-title {
+            font-size: 32px;
+            font-weight: 900;
+        }
+
+        .info-note {
+            font-weight: 600;
+            color: indianred;
+        }
+
+        .info-body {
+            font-size: 24px;
+            padding: 10px;
+        }
+
+        .info-end {
+            font-size: 18px;
+            padding: 5px;
+            font-weight: 400;
+        }
+
+        ::selection {
+            color: #fff;
+            background: rgb(255 255 255 / 35%);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            background-color: rgb(255 255 255 / 8%);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-color: gray;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgb(255 255 255 / 32%);
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background-color: rgb(255 255 255 / 8%);
+        }
     </style>
+
+    <script>
+        function link(url) {
+            window.open(`https://${url}`, "_blank");
+        }
+    </script>
 </body>
 
 </html>
