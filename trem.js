@@ -149,23 +149,23 @@ if (info_data.rts) {
     audio_warn.play();
   }
 }
-if (info_data.eew) {
+if (info_data.eew.length) {
   if (!eew_alert) {
     eew_alert = true;
     if (audio_state) audio_alert.play();
   }
-  eew_time.textContent = time_string(info_data.eew.time);
-  eew_number.textContent = info_data.eew.number;
-  eew_loc.textContent = info_data.eew.location;
-  eew_scale.textContent = info_data.eew.scale;
-  eew_depth.textContent = `${info_data.eew.depth}km`;
+  eew_time.textContent = time_string(info_data.eew[0].time);
+  eew_number.textContent = info_data.eew[0].number;
+  eew_loc.textContent = info_data.eew[0].location;
+  eew_scale.textContent = info_data.eew[0].scale;
+  eew_depth.textContent = `${info_data.eew[0].depth}km`;
   eew_max.textContent =
-    info_data.eew.max == undefined
+    info_data.eew[0].max == undefined
       ? "未知"
-      : Intensity[info_data.eew.max].text;
-  if (info_data.eew.max != undefined) {
+      : Intensity[info_data.eew[0].max].text;
+  if (info_data.eew[0].max != undefined) {
     eew_info.style.color = "yellow";
-    if (info_data.eew.max > 4) eew_info.style.color = "red";
+    if (info_data.eew[0].max > 4) eew_info.style.color = "red";
   }
   for (const item of document.getElementsByClassName("text-title"))
     item.style.display = "";
