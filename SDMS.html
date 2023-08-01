@@ -6,8 +6,7 @@
     <meta content="TREM SDMS" property="og:title" />
     <meta content="Seismic Data Management System | 地震資料管理系統" property="og:description" />
     <meta content="https://exptechtw.github.io/" property="og:url" />
-    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png"
-        property="og:image" />
+    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png" property="og:image" />
 </head>
 
 <body style="background-color: #333439;">
@@ -15,6 +14,13 @@
         <div class="body">
             <div class="title">Seismic Data Management System</div>
             <div class="subtitle">地震資料管理系統</div>
+            <div class="stations_box">
+                <div class="stations_title">觀測網</div>
+                <select class="stations_text" id="Network">
+                    <option value="MS" selected>MS-Net | 微地震觀測網</option>
+                    <option value="SE">SE-Net | 強震觀測網</option>
+                </select>
+            </div>
             <div class="stations_box">
                 <div class="stations_title">測站代碼</div>
                 <select class="stations_text" id="stations"></select>
@@ -166,17 +172,32 @@
         const _end = document.getElementById("end");
         _start.value = Now;
         _end.value = Now1;
+        let station_data;
         axios.get("https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/Json/earthquake/station.json")
             .then((res) => {
-                const data = res.data;
-                for (let i = 0; i < Object.keys(data).length; i++) {
-                    const station = Object.keys(data)[i];
+                station_data = res.data;
+                _stations.innerHTML = "";
+                for (let i = 0; i < Object.keys(station_data).length; i++) {
+                    const station = Object.keys(station_data)[i];
                     const opt_station = document.createElement("option");
                     opt_station.value = station;
-                    opt_station.innerHTML = `${station} ${data[station].Loc}`;
-                    stations.appendChild(opt_station);
+                    opt_station.innerHTML = `${station} ${station_data[station].Loc}`;
+                    _stations.appendChild(opt_station);
                 }
             })
+
+        const Network = document.getElementById("Network");
+        Network.onchange = () => {
+            _stations.innerHTML = "";
+            for (let i = 0; i < Object.keys(station_data).length; i++) {
+                const station = Object.keys(station_data)[i];
+                if ((Network.value == "MS" && station.startsWith("L")) || (Network.value == "SE" && station.startsWith("H"))) continue
+                const opt_station = document.createElement("option");
+                opt_station.value = station;
+                opt_station.innerHTML = `${station} ${station_data[station].Loc}`;
+                _stations.appendChild(opt_station);
+            }
+        }
 
         function download() {
             _button.disabled = true;
