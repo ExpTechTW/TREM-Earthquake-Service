@@ -179,6 +179,7 @@
                 _stations.innerHTML = "";
                 for (let i = 0; i < Object.keys(station_data).length; i++) {
                     const station = Object.keys(station_data)[i];
+                    if (station.startsWith("L")) continue;
                     const opt_station = document.createElement("option");
                     opt_station.value = station;
                     opt_station.innerHTML = `${station} ${station_data[station].Loc}`;
@@ -191,7 +192,7 @@
             _stations.innerHTML = "";
             for (let i = 0; i < Object.keys(station_data).length; i++) {
                 const station = Object.keys(station_data)[i];
-                if ((Network.value == "MS" && station.startsWith("L")) || (Network.value == "SE" && station.startsWith("H"))) continue
+                if ((Network.value == "MS" && station.startsWith("L")) || (Network.value == "SE" && station.startsWith("H"))) continue;
                 const opt_station = document.createElement("option");
                 opt_station.value = station;
                 opt_station.innerHTML = `${station} ${station_data[station].Loc}`;
