@@ -76,6 +76,7 @@ audio.onclick = () => {
         audio.classList.add("danger");
         audio.textContent = "關閉音效";
         audio_warn.play();
+        audio_alert.play();
     } else {
         audio.classList.remove("danger");
         audio.textContent = "開啟音效";
