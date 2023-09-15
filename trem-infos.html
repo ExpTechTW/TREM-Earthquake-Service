@@ -17,7 +17,7 @@
             <div style="font-size: 12px;">每分鐘自動刷新</div>
         </div>
         <div style="display: grid;">
-            <a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/eew-infos.html">CWB EEW History</a>
+            <a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/eew-infos.html">CWA EEW History</a>
             <a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/image.html">TREM Image</a>
         </div>
         <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ <b>檢知</b> 欄位顯示 <b>否</b> 表示為內部訊息 非公開
@@ -30,7 +30,7 @@
                     <th>檢知</th>
                     <th>日期</th>
                     <th>預警時間(TREM)</th>
-                    <th>預警時間(CWB)</th>
+                    <th>預警時間(CWA)</th>
                     <th>觸發站數(TREM)</th>
                     <th>最大震度(TREM)</th>
                     <th>編號</th>
@@ -41,7 +41,7 @@
                     <th>深度</th>
                     <th>規模</th>
                     <th>重播</th>
-                    <th>地震報告(CWB)</th>
+                    <th>地震報告(CWA)</th>
                 </tr>
             </thead>
             <tbody id="trem-table"></tbody>
@@ -256,7 +256,7 @@
                     if (!data[id].eq.no.toString().includes("000")) no.style.backgroundColor = "goldenrod";
                     if (data[id].eq.no != 111000) {
                         const originTime = new Date(data[id].eq.time);
-                        const cwb_code = "EQ"
+                        const cwa_code = "EQ"
                             + data[id].eq.no
                             + "-"
                             + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
@@ -265,7 +265,7 @@
                             + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
                             + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
                             + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
-                        link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html">點擊</a>`;
+                        link.innerHTML = `<a style="color: lightskyblue;" href="https://www.cwa.gov.tw/V8/C/E/EQ/${cwa_code}.html">點擊</a>`;
                         link.setAttribute("data-text", link.textContent);
                     }
                 }

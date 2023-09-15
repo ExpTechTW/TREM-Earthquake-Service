@@ -23,9 +23,9 @@
         <div style="display: grid;">
             <a id="old" style="color: lightskyblue;">舊版頁面</a>
             <a id="replay" style="color: lightskyblue;">網頁重播</a>
-            <a id="report-cwb" style="color: lightskyblue;display: none;">地震報告(CWB)</a>
+            <a id="report-cwa" style="color: lightskyblue;display: none;">地震報告(CWA)</a>
         </div>
-        <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ 此頁面所有資料均來自 TREM 結果請依 <b>中央氣象局(CWB)</b> 發布之內容為準
+        <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ 此頁面所有資料均來自 TREM 結果請依 <b>中央氣象署(CWA)</b> 發布之內容為準
         </div>
         <table id="trem">
             <thead>
@@ -69,7 +69,7 @@
                     <th>精度</th>
                     <th>檢知</th>
                     <th>警報</th>
-                    <th>達標(CWB)</th>
+                    <th>達標(CWA)</th>
                     <th>震後</th>
                     <th>距離檢知</th>
                     <th>備註</th>
@@ -254,10 +254,10 @@
                             document.getElementById("replay").href = `https://exptech.com.tw/api/v1/file/trem.html?time=${data.alert - 10000}`;
 
                             if (data.eq.no && data.eq.no != 111000) {
-                                const report_cwb = document.getElementById("report-cwb");
-                                report_cwb.style.display = ""
+                                const report_cwa = document.getElementById("report-cwa");
+                                report_cwa.style.display = ""
                                 const originTime = new Date(data.eq.time);
-                                const cwb_code = "EQ"
+                                const cwa_code = "EQ"
                                     + data.eq.no
                                     + "-"
                                     + (originTime.getMonth() + 1 < 10 ? "0" : "") + (originTime.getMonth() + 1)
@@ -266,7 +266,7 @@
                                     + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
                                     + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
                                     + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
-                                report_cwb.href = `https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html`;
+                                report_cwa.href = `https://www.cwa.gov.tw/V8/C/E/EQ/${cwa_code}.html`;
                             }
 
                             const frag_1 = new DocumentFragment();
@@ -445,8 +445,8 @@
                                 const frag_2 = new DocumentFragment();
 
                                 let Alert = false;
-                                let CWB = false;
-                                let cwb_eew = false
+                                let CWA = false;
+                                let cwa_eew = false
                                 let rf_eew = false
                                 let mrl_eew = false
                                 for (let i = 0; i < data.trem.eew.length; i++) {
@@ -465,9 +465,9 @@
 
                                     let note_text = ""
                                     const note = document.createElement("td");
-                                    if (data.eew && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.eew && !cwb_eew) {
-                                        cwb_eew = true;
-                                        note_text += `${timestamp(data.eew)}${(data.eq.time) ? `<br>(震後 ${((data.eew - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>中央氣象局 地震預警`;
+                                    if (data.eew && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.eew && !cwa_eew) {
+                                        cwa_eew = true;
+                                        note_text += `${timestamp(data.eew)}${(data.eq.time) ? `<br>(震後 ${((data.eew - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>中央氣象署 地震預警`;
                                     }
                                     if (data.note) {
                                         if (data.note.rf && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.note.rf && !rf_eew) {
@@ -537,11 +537,11 @@
                                     alert.setAttribute("data-text", alert.textContent);
                                     if (data.trem.eew[i].alert || Alert) alert.style.backgroundColor = "red";
 
-                                    if (data.trem.eew[i].scale >= 4.5 || data.trem.eew[i].max >= 4 || (data.trem.eew[i].model == "nsspe" && data.trem.eew[i].max > 1)) CWB = true;
-                                    const cwb = document.createElement("td");
-                                    cwb.textContent = (CWB) ? "是" : "否";
-                                    cwb.setAttribute("data-text", cwb.textContent);
-                                    if (CWB) cwb.style.backgroundColor = "red";
+                                    if (data.trem.eew[i].scale >= 4.5 || data.trem.eew[i].max >= 4 || (data.trem.eew[i].model == "nsspe" && data.trem.eew[i].max > 1)) CWA = true;
+                                    const cwa = document.createElement("td");
+                                    cwa.textContent = (CWA) ? "是" : "否";
+                                    cwa.setAttribute("data-text", cwa.textContent);
+                                    if (CWA) cwa.style.backgroundColor = "red";
 
                                     const release_after = document.createElement("td");
                                     if (data.eq.time) release_after.textContent = `${((data.trem.eew[i].timestamp - data.eq.time) / 1000).toFixed(1)} 秒`;
@@ -566,7 +566,7 @@
                                         box.appendChild(quality);
                                         box.appendChild(rts);
                                         box.appendChild(alert);
-                                        box.appendChild(cwb);
+                                        box.appendChild(cwa);
                                         box.appendChild(release_after);
                                         box.appendChild(alert_after);
                                         box.appendChild(note);
