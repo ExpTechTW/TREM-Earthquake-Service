@@ -23,7 +23,7 @@
         <div class="box">
             <img src="" alt="" id="eew" class="img">
             <img src="" alt="" id="report" class="img">
-            <img src="" alt="" id="i-cwa" class="img">
+            <img src="" alt="" id="i-cwb" class="img">
             <img src="" alt="" id="i-palert" class="img">
             <img src="" alt="" id="i-trem" class="img">
         </div>
@@ -66,7 +66,7 @@
                     const data = res.data;
                     document.getElementById("eew").src = `https://exptech.com.tw/api/v1/file${data.eew}?v=${Date.now()}`;
                     document.getElementById("report").src = `https://exptech.com.tw/api/v1/file${data.report}?v=${Date.now()}`;
-                    document.getElementById("i-cwa").src = `https://exptech.com.tw/api/v1/file${data.intensity.cwa}?v=${Date.now()}`;
+                    document.getElementById("i-cwb").src = `https://exptech.com.tw/api/v1/file${data.intensity.cwb}?v=${Date.now()}`;
                     document.getElementById("i-trem").src = `https://exptech.com.tw/api/v1/file${data.intensity.trem}?v=${Date.now()}`;
                     document.getElementById("i-palert").src = `https://exptech.com.tw/api/v1/file${data.intensity.palert}?v=${Date.now()}`;
                 })
