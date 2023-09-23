@@ -42,7 +42,7 @@
                     ":" + now.getSeconds() +
                     ":" + now.getMilliseconds();
                 const title = document.getElementById("report_id");
-                title.innerHTML = `編號 ${res.id} | 檢知報告<br>TREM&emsp;&emsp;&nbsp;&nbsp;檢知發送時間 ${Now}<br>中央氣象局 預警接收時間 ${eew_Now}`;
+                title.innerHTML = `編號 ${res.id} | 檢知報告<br>TREM&emsp;&emsp;&nbsp;&nbsp;檢知發送時間 ${Now}<br>中央氣象署 預警接收時間 ${eew_Now}`;
                 if (res.intensity.length) {
                     const image = document.getElementById("intensity");
                     image.src = `https://exptech.com.tw/api/v1/file?path=/Download/${res.intensity[res.intensity.length - 1]}-intensity.png`;

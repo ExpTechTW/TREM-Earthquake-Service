@@ -23,9 +23,9 @@
         <div style="display: grid;">
             <a id="old" style="color: lightskyblue;">舊版頁面</a>
             <a id="replay" style="color: lightskyblue;">網頁重播</a>
-            <a id="report-cwb" style="color: lightskyblue;display: none;">地震報告(CWB)</a>
+            <a id="report-cwb" style="color: lightskyblue;display: none;">地震報告(CWA)</a>
         </div>
-        <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ 此頁面所有資料均來自 TREM 結果請依 <b>中央氣象局(CWB)</b> 發布之內容為準
+        <div style="color: lightcoral;font-size: 16px;padding: 5px;">⚠️ 此頁面所有資料均來自 TREM 結果請依 <b>中央氣象署(CWA)</b> 發布之內容為準
         </div>
         <table id="trem">
             <thead>
@@ -69,7 +69,7 @@
                     <th>精度</th>
                     <th>檢知</th>
                     <th>警報</th>
-                    <th>達標(CWB)</th>
+                    <th>達標(CWA)</th>
                     <th>震後</th>
                     <th>距離檢知</th>
                     <th>備註</th>
@@ -266,7 +266,7 @@
                                     + (originTime.getHours() < 10 ? "0" : "") + originTime.getHours()
                                     + (originTime.getMinutes() < 10 ? "0" : "") + originTime.getMinutes()
                                     + (originTime.getSeconds() < 10 ? "0" : "") + originTime.getSeconds();
-                                report_cwb.href = `https://www.cwb.gov.tw/V8/C/E/EQ/${cwb_code}.html`;
+                                report_cwb.href = `https://www.cwa.gov.tw/V8/C/E/EQ/${cwa_code}.html`;
                             }
 
                             const frag_1 = new DocumentFragment();
@@ -467,7 +467,7 @@
                                     const note = document.createElement("td");
                                     if (data.eew && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.eew && !cwb_eew) {
                                         cwb_eew = true;
-                                        note_text += `${timestamp(data.eew)}${(data.eq.time) ? `<br>(震後 ${((data.eew - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>中央氣象局 地震預警`;
+                                        note_text += `${timestamp(data.eew)}${(data.eq.time) ? `<br>(震後 ${((data.eew - data.eq.time) / 1000).toFixed(1)} 秒)` : ""}<br>中央氣象署 地震預警`;
                                     }
                                     if (data.note) {
                                         if (data.note.rf && data.trem.eew[i + 1] && data.trem.eew[i + 1].timestamp > data.note.rf && !rf_eew) {
