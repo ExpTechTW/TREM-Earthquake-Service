@@ -20,13 +20,13 @@
     <script>
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        fetch(`https://exptech.com.tw/api/v1/file?path=/trem_report/${params.id}.json`)
+        fetch(`https://api.exptech.com.tw/file/trem_report/${params.id}.json`)
             .then((res) => {
                 return res.json();
             }).then((res) => {
                 console.log(res.alert);
                 const replay = document.getElementById("replay");
-                replay.href = `https://exptech.com.tw/api/v1/file?path=/trem.html&time=${res.alert - 10000}`;
+                replay.href = `https://api.exptech.com.tw/file/trem.html?time=${res.alert - 10000}`;
                 let now = new Date(res.alert);
                 const Now = (now.getMonth() + 1) +
                     "/" + now.getDate() +
@@ -42,10 +42,10 @@
                     ":" + now.getSeconds() +
                     ":" + now.getMilliseconds();
                 const title = document.getElementById("report_id");
-                title.innerHTML = `編號 ${res.id} | 檢知報告<br>TREM&emsp;&emsp;&nbsp;&nbsp;檢知發送時間 ${Now}<br>中央氣象署 預警接收時間 ${eew_Now}`;
+                title.innerHTML = `編號 ${res.id} | 檢知報告<br>TREM&emsp;&emsp;&nbsp;&nbsp;檢知發送時間(TREM) ${Now}<br>中央氣象署(CWA) 預警接收時間 ${eew_Now}`;
                 if (res.intensity.length) {
                     const image = document.getElementById("intensity");
-                    image.src = `https://exptech.com.tw/api/v1/file?path=/Download/${res.intensity[res.intensity.length - 1]}-intensity.png`;
+                    image.src = `https://api.exptech.com.tw/file/Download/${res.intensity[res.intensity.length - 1]}-intensity.png`;
                 }
                 const div = document.getElementById("stations");
                 for (let index = 0; index < res.station.length; index++) {
@@ -62,7 +62,7 @@
                     const img = document.createElement("img");
                     img.style.height = "200px";
                     img.style.width = "200px";
-                    img.src = `https://exptech.com.tw/api/v1/file?path=/Download/${info.image}-waveform.png`;
+                    img.src = `https://api.exptech.com.tw/file/Download/${info.image}-waveform.png`;
                     _div.appendChild(img);
                     const _span = document.createElement('font');
                     _span.style.size = "5";

@@ -230,7 +230,7 @@
 
         function file(file) {
             axios({
-                url: `https://exptech.com.tw/api/v1/file?path=/Download/${file}.zip`,
+                url: `https://api.exptech.com.tw/file/Download/${file}.zip`,
                 method: 'GET',
                 responseType: 'blob'
             }).then((res) => {

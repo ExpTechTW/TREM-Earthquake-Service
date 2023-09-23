@@ -15,7 +15,7 @@
         <div style="font-size: 30px;font-weight: 900;">TREM 圖像</div>
         <div style="font-size: 12px;">每分鐘自動刷新</div>
         <div style="display: grid;">
-            <a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/trem-infos.html">TREM Earthquake
+            <a style="color: lightskyblue;" href="https://api.exptech.com.tw/file/trem-infos.html">TREM Earthquake
                 History</a>
             <a style="color: lightskyblue;" href="https://twitter.com/ExpTech_TREM">Twitter</a>
             <a style="color: lightskyblue;" href="https://www.instagram.com/exptech_trem">Instagram</a>
@@ -24,7 +24,6 @@
             <img src="" alt="" id="eew" class="img">
             <img src="" alt="" id="report" class="img">
             <img src="" alt="" id="i-cwb" class="img">
-            <img src="" alt="" id="i-palert" class="img">
             <img src="" alt="" id="i-trem" class="img">
         </div>
     </div>
@@ -64,11 +63,10 @@
             axios.get(`https://exptech.com.tw/api/v1/images`)
                 .then((res) => {
                     const data = res.data;
-                    document.getElementById("eew").src = `https://exptech.com.tw/api/v1/file${data.eew}?v=${Date.now()}`;
-                    document.getElementById("report").src = `https://exptech.com.tw/api/v1/file${data.report}?v=${Date.now()}`;
-                    document.getElementById("i-cwb").src = `https://exptech.com.tw/api/v1/file${data.intensity.cwb}?v=${Date.now()}`;
-                    document.getElementById("i-trem").src = `https://exptech.com.tw/api/v1/file${data.intensity.trem}?v=${Date.now()}`;
-                    document.getElementById("i-palert").src = `https://exptech.com.tw/api/v1/file${data.intensity.palert}?v=${Date.now()}`;
+                    document.getElementById("eew").src = `https://api.exptech.com.tw/file${data.eew}?v=${Date.now()}`;
+                    document.getElementById("report").src = `https://api.exptech.com.tw/file${data.report}?v=${Date.now()}`;
+                    document.getElementById("i-cwb").src = `https://api.exptech.com.tw/file${data.intensity.cwb}?v=${Date.now()}`;
+                    document.getElementById("i-trem").src = `https://api.exptech.com.tw/file${data.intensity.trem}?v=${Date.now()}`;
                 })
         }
 

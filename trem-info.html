@@ -202,8 +202,8 @@
     <script>
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        if (!params.id) window.location.href = 'https://exptech.com.tw/api/v1/file/trem-infos.html';
-        document.getElementById("old").href = `https://exptech.com.tw/api/v1/file/trem-report.html?id=${params.id}`;
+        if (!params.id) window.location.href = 'https://api.exptech.com.tw/file/trem-infos.html';
+        document.getElementById("old").href = `https://api.exptech.com.tw/file/trem-report.html?id=${params.id}`;
         const title = document.getElementById("ID");
         const back = document.getElementById("back");
         const mode = document.getElementById("mode");
@@ -215,7 +215,7 @@
         const raw_table = document.getElementById("raw-table");
         const ctx = document.getElementById('myChart');
 
-        back.href = `https://exptech.com.tw/api/v1/file/trem-infos.html?key=${params.key}`;
+        back.href = `https://api.exptech.com.tw/file/trem-infos.html?key=${params.key}`;
         let station_data;
         let data;
 
@@ -251,7 +251,7 @@
                             cache = data
                             title.textContent = `${params.id}${(cache.error) ? " (誤報)" : (cache.test) ? " (測試)" : ""}`;
 
-                            document.getElementById("replay").href = `https://exptech.com.tw/api/v1/file/trem.html?time=${data.alert - 10000}`;
+                            document.getElementById("replay").href = `https://api.exptech.com.tw/file/trem.html?time=${data.alert - 10000}`;
 
                             if (data.eq.no && data.eq.no != 111000) {
                                 const report_cwb = document.getElementById("report-cwb");
@@ -278,7 +278,7 @@
                                 const box = document.createElement("tr");
                                 const ID = document.createElement("td");
                                 const uuid = data.station[i].uuid;
-                                ID.innerHTML = `<a style="color: lightskyblue;" href="https://exptech.com.tw/api/v1/file/Download/${data.station[i].image}-waveform.png">${uuid}</a>`;
+                                ID.innerHTML = `<a style="color: lightskyblue;" href="https://api.exptech.com.tw/file/Download/${data.station[i].image}-waveform.png">${uuid}</a>`;
                                 ID.setAttribute("data-text", ID.textContent);
 
                                 const loc = document.createElement("td");
