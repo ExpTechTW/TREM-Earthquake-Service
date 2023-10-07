@@ -122,11 +122,11 @@ image.onerror = () => {
     image.src = "https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/rts.png";
 }
 const updateImage = () => {
-    image.src = `https://exptech.com.tw/api/v1/trem/rts-image?v=${Date.now()}${time ? `&time=${time}` : ""}`;
+    image.src = `https://api.exptech.com.tw/api/v1/trem/rts-image?v=${Date.now()}${time ? `&time=${time}` : ""}`;
 };
 const updateInfo = () => {
     fetch(
-        `https://exptech.com.tw/api/v1/earthquake/info?time=${!time ? 0 : Math.floor(time / 1000)
+        `https://api.exptech.com.tw/api/v1/eq/eew?time=${!time ? 0 : Math.floor(time / 1000)
         }`
     )
         .then(async (res) => (info_data = await res.json()))
