@@ -1,1 +1,74 @@
-<html lang="zh-Hant"><head><title id="title">強震監視器</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta content="TREM 即時強震觀測網" property="og:title"><meta content="Taiwan Real-time Earthquake Monitoring ( 臺灣即時地震監測 )" property="og:description"><meta content="https://exptechtw.github.io/" property="og:url"><meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png" property="og:image"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ExpTechTW/TREM-Earthquake-Service@master/trem.css"></head><body><div class="app-container"><div><div class="title">TREM 強震監視器</div><div style="color:#f08080">僅供參考 最終結果依 <b>中央氣象署(CWA)</b> 為準</div></div><div class="container"><div class="map-wrapper"><div class="map-container"><img src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/taiwan.png" class="map-image"><img src="https://exptech.com.tw/api/v1/trem/rts-image?v=0" id="img" class="map-image"><img src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/int.png" class="map-image"></div></div><div class="control-container"><div id="eew-info"><div style="display:flex"><div class="text-box"><div class="text-title" id="eew-time"></div></div><div class="text-box"><div class="text-title">第</div><div class="text-body" id="eew-number" style="padding-left:0"></div><div class="text-title">報</div></div><div class="text-box"><div class="text-title" id="eew-loc"></div></div></div><div style="display:flex"><div class="text-box"><div class="text-title">M</div><div class="text-body" id="eew-scale"></div></div><div class="text-box"><div class="text-title">深度</div><div class="text-body" id="eew-depth"></div></div><div class="text-box"><div class="text-title">最大預估震度</div><div class="text-body" id="eew-max"></div></div></div></div><div class="control"><a id="time" class="subtitle">---- / -- / -- -- : -- : --</a><div><input id="timeline" type="range" min="0" max="86400" step="1" value="86400"></div><div><button id="last" disabled="disabled">最新</button> <button id="switch">暫停</button> <button id="audio">開啟音效</button></div><a style="color:#87cefa;padding:5px" href="https://exptech.com.tw/api/v1/file/trem-more.html">更多資訊 >></a></div></div></div><audio id="audio_warn"><source src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/warn.mp3" type="audio/mpeg"></audio><audio id="audio_alert"><source src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/alert.mp3" type="audio/mpeg"></audio></div><script src="https://cdn.jsdelivr.net/gh/ExpTechTW/TREM-Earthquake-Service@master/trem.js"></script></body></html>
+<html lang="zh-Hant">
+
+<head>
+    <title id="title">強震監視器</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta content="TREM 即時強震觀測網" property="og:title">
+    <meta content="Taiwan Real-time Earthquake Monitoring ( 臺灣即時地震監測 )" property="og:description">
+    <meta content="https://exptechtw.github.io/" property="og:url">
+    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png" property="og:image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ExpTechTW/TREM-Earthquake-Service@master/trem.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <div>
+            <div class="title">TREM 強震監視器</div>
+            <div style="color:#f08080">僅供參考 最終結果依 <b>中央氣象署(CWA)</b> 為準</div>
+        </div>
+        <div class="container">
+            <div class="map-wrapper">
+                <div class="map-container"><img
+                        src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/taiwan.png"
+                        class="map-image"><img src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/rts.png" id="img"
+                        class="map-image"><img src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/int.png"
+                        class="map-image"></div>
+            </div>
+            <div class="control-container">
+                <div id="eew-info">
+                    <div style="display:flex">
+                        <div class="text-box">
+                            <div class="text-title" id="eew-time"></div>
+                        </div>
+                        <div class="text-box">
+                            <div class="text-title">第</div>
+                            <div class="text-body" id="eew-number" style="padding-left:0"></div>
+                            <div class="text-title">報</div>
+                        </div>
+                        <div class="text-box">
+                            <div class="text-title" id="eew-loc"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex">
+                        <div class="text-box">
+                            <div class="text-title">M</div>
+                            <div class="text-body" id="eew-scale"></div>
+                        </div>
+                        <div class="text-box">
+                            <div class="text-title">深度</div>
+                            <div class="text-body" id="eew-depth"></div>
+                        </div>
+                        <div class="text-box">
+                            <div class="text-title">最大預估震度</div>
+                            <div class="text-body" id="eew-max"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control"><a id="time" class="subtitle">---- / -- / -- -- : -- : --</a>
+                    <div><input id="timeline" type="range" min="0" max="86400" step="1" value="86400"></div>
+                    <div><button id="last" disabled="disabled">最新</button> <button id="switch">暫停</button> <button
+                            id="audio">開啟音效</button></div><a style="color:#87cefa;padding:5px"
+                        href="https://exptech.com.tw/api/v1/file/trem-more.html">更多資訊 >></a>
+                </div>
+            </div>
+        </div><audio id="audio_warn">
+            <source src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/warn.mp3" type="audio/mpeg">
+        </audio><audio id="audio_alert">
+            <source src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/alert.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+    <script src="https://api.exptech.com.tw/file/trem.js"></script>
+</body>
+
+</html>

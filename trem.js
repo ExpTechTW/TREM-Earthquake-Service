@@ -43,25 +43,15 @@ const Intensity = [
 
 const time_string = (time) => {
     const now = new Date(time);
-    let Now = now.getFullYear().toString();
-    Now += "/";
-    if (now.getMonth() + 1 < 10)
-        Now += "0" + (now.getMonth() + 1).toString();
-    else Now += (now.getMonth() + 1).toString();
-    Now += "/";
-    if (now.getDate() < 10) Now += "0" + now.getDate().toString();
-    else Now += now.getDate().toString();
-    Now += " ";
-    if (now.getHours() < 10) Now += "0" + now.getHours().toString();
-    else Now += now.getHours().toString();
-    Now += ":";
-    if (now.getMinutes() < 10) Now += "0" + now.getMinutes().toString();
-    else Now += now.getMinutes().toString();
-    Now += ":";
-    if (now.getSeconds() < 10) Now += "0" + now.getSeconds().toString();
-    else Now += now.getSeconds().toString();
-    return Now;
+    const YYYY = now.getFullYear().toString();
+    const MM = (now.getMonth() + 1).toString().padStart(2, '0');
+    const DD = now.getDate().toString().padStart(2, '0');
+    const hh = now.getHours().toString().padStart(2, '0');
+    const mm = now.getMinutes().toString().padStart(2, '0');
+    const ss = now.getSeconds().toString().padStart(2, '0');
+    return `${YYYY}/${MM}/${DD} ${hh}:${mm}:${ss}`;
 };
+
 
 let state = true;
 let lock = false;
@@ -69,6 +59,8 @@ let audio_state = false;
 let info_data = {};
 let eew_alert = false;
 let last_audio_time = 0;
+let time_ntp = 0;
+let time_local = 0;
 
 audio.onclick = () => {
     audio_state = !audio_state;
@@ -96,7 +88,7 @@ s.onclick = () => {
     } else {
         t.style.color = "red";
         last.disabled = true;
-        if (!time) time = Date.now();
+        if (!time) time = Now().getTime();
         s.textContent = "播放";
     }
 };
@@ -108,7 +100,7 @@ timeline.oninput = () => {
         last.disabled = false;
         t.style.color = "yellow";
     }
-    time = Date.now() - (86400 - timeline.value) * 1000;
+    time = Now().getTime() - (86400 - timeline.value) * 1000;
     t.textContent = `${time_string(time)} (重播)`;
 };
 timeline.onmousedown = () => {
@@ -121,21 +113,42 @@ timeline.onmouseup = () => {
 image.onerror = () => {
     image.src = "https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/rts.png";
 }
-const updateImage = () => {
-    image.src = `https://api.exptech.com.tw/api/v1/trem/rts-image?v=${Date.now()}${time ? `&time=${time}` : ""}`;
+const updateImage = (t) => {
+    image.src = `https://api.exptech.com.tw/api/v1/trem/rts-image/${t}`;
 };
-const updateInfo = () => {
-    fetch(
-        `https://api.exptech.com.tw/api/v1/eq/eew?time=${!time ? 0 : Math.floor(time / 1000)
-        }`
-    )
-        .then(async (res) => (info_data = await res.json()))
-        .catch((err) => console.error(err));
+const updateInfo = async (t) => {
+    try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1000);
+        const res = await fetch(`https://api.exptech.com.tw/api/v1/eq/eew/${t}`, { signal: controller.signal });
+        clearTimeout(timer);
+        if (!res.ok) throw new Error("server error");
+        info_data = await res.json()
+    } catch (err) {
+        console.error(err)
+    }
 };
+const ntp = async () => {
+    try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1000);
+        const res = await fetch(`https://api.exptech.com.tw/api/v1/ntp`, { signal: controller.signal });
+        clearTimeout(timer);
+        if (!res.ok) throw new Error("server error");
+        res = await res.json()
+        time_ntp = res.time
+        time_local = Date.now()
+    } catch (err) {
+        console.error(err)
+    }
+}
+function Now() {
+    return new Date(time_ntp + (Date.now() - time_local));
+}
 setInterval(() => {
     if (!lock) {
-        timeline.value = 86400 - (!time ? 0 : (Date.now() - time) / 1000);
-        t.textContent = `${time_string(!time ? Date.now() : time)} (${t.style.color == "yellow"
+        timeline.value = 86400 - (!time ? 0 : (Now().getTime() - time) / 1000);
+        t.textContent = `${time_string(!time ? Now().getTime() : time)} (${t.style.color == "yellow"
             ? "重播"
             : t.style.color == "red"
                 ? "暫停"
@@ -144,8 +157,16 @@ setInterval(() => {
     }
     if (!state) return;
     if (time) time += 1000;
-    updateImage();
-    updateInfo();
+    const now = (time) ? new Date(time) : Now();
+    const YYYY = now.getFullYear();
+    const MM = (now.getMonth() + 1).toString().padStart(2, "0");
+    const DD = now.getDate().toString().padStart(2, "0");
+    const hh = now.getHours().toString().padStart(2, "0");
+    const mm = now.getMinutes().toString().padStart(2, "0");
+    const ss = now.getSeconds().toString().padStart(2, "0");
+    const _t = `${YYYY}${MM}${DD}${hh}${mm}${ss}`;
+    updateImage(_t);
+    updateInfo(_t);
     if (info_data.rts) {
         if (audio_state && Date.now() - last_audio_time > 1500) {
             last_audio_time = Date.now();
