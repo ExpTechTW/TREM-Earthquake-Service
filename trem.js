@@ -130,13 +130,14 @@ const updateInfo = async (t) => {
 };
 const ntp = async () => {
 	try {
+		const t=Date.now()
 		const controller = new AbortController();
 		const timer = setTimeout(() => controller.abort(), 1000);
 		const res = await fetch("https://api.exptech.com.tw/api/v1/ntp", { signal: controller.signal });
 		clearTimeout(timer);
 		if (!res.ok) throw new Error("server error");
 		res = await res.json();
-		time_ntp = res.time;
+		time_ntp = res.time + (Date.now() - t) / 2;
 		time_local = Date.now();
 	} catch (err) {
 		console.error(err);
