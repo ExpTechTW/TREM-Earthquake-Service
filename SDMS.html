@@ -149,22 +149,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
     <script>
-        let utc = new Date();
-        let NOW = new Date(utc.getTime() + utc.getTimezoneOffset() * 60 * 1000 + 3600 * 8 * 1000);
-        const now = new Date(NOW.getTime() - 310000);
-        const Now = now.getFullYear() +
-            "-" + (now.getMonth() + 1) +
-            "-" + now.getDate() +
-            " " + now.getHours() +
-            ":" + now.getMinutes() +
-            ":" + now.getSeconds();
-        const now1 = new Date(NOW.getTime() - 10000);
-        const Now1 = now1.getFullYear() +
-            "-" + (now1.getMonth() + 1) +
-            "-" + now1.getDate() +
-            " " + now1.getHours() +
-            ":" + now1.getMinutes() +
-            ":" + now1.getSeconds();
+        const utc = new Date();
+        const NOW = new Date(utc.getTime() + utc.getTimezoneOffset() * 60 * 1000 + 3600 * 8 * 1000);
+        const Now = formatTime(NOW.getTime() - 310000);
+        const Now1 = formatTime(NOW.getTime() - 10000);
 
         const _stations = document.getElementById("stations");
         const _button = document.getElementById("button");
@@ -173,31 +161,43 @@
         _start.value = Now;
         _end.value = Now1;
         let station_data;
-        axios.get("https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/Json/earthquake/station.json")
+        let region;
+        axios.get("https://raw.githubusercontent.com/ExpTechTW/API/master/resource/region.json")
             .then((res) => {
-                station_data = res.data;
-                _stations.innerHTML = "";
-                for (let i = 0; i < Object.keys(station_data).length; i++) {
-                    const station = Object.keys(station_data)[i];
-                    if (station.startsWith("L")) continue;
-                    const opt_station = document.createElement("option");
-                    opt_station.value = station;
-                    opt_station.innerHTML = `${station} ${station_data[station].Loc}`;
-                    _stations.appendChild(opt_station);
-                }
-            })
+                region = res.data;
+                axios.get("https://raw.githubusercontent.com/ExpTechTW/API/master/resource/station.json")
+                    .then((res) => {
+                        station_data = res.data;
+                        _stations.innerHTML = "";
+                        for (const id of Object.keys(station_data)) {
+                            if (station_data[id].net == "SE-Net") continue;
+                            const opt_station = document.createElement("option");
+                            opt_station.value = id;
+                            opt_station.innerHTML = `${id} | ${loc_code_to_string(station_data[id].info[station_data[id].info.length - 1].code)}`;
+                            _stations.appendChild(opt_station);
+                        }
+                    });
+            });
 
         const Network = document.getElementById("Network");
         Network.onchange = () => {
             _stations.innerHTML = "";
-            for (let i = 0; i < Object.keys(station_data).length; i++) {
-                const station = Object.keys(station_data)[i];
-                if ((Network.value == "MS" && station.startsWith("L")) || (Network.value == "SE" && station.startsWith("H"))) continue;
+            for (const id of Object.keys(station_data)) {
+                if ((Network.value == "MS" && station_data[id].net == "SE-Net") || (Network.value == "SE" && station_data[id].net == "MS-Net")) continue;
                 const opt_station = document.createElement("option");
-                opt_station.value = station;
-                opt_station.innerHTML = `${station} ${station_data[station].Loc}`;
+                opt_station.value = id;
+                opt_station.innerHTML = `${id} | ${loc_code_to_string(station_data[id].info[station_data[id].info.length - 1].code)}`;
                 _stations.appendChild(opt_station);
             }
+        };
+
+        function loc_code_to_string(code) {
+            for (const city of Object.keys(region)) {
+                for (const town of Object.keys(region[city])) {
+                    if (region[city][town].code == code) return `${city} ${town}`;
+                }
+            }
+            return "未知區域";
         }
 
         function download() {
@@ -206,45 +206,69 @@
             _stations.disabled = true;
             _start.disabled = true;
             _end.disabled = true;
-            axios.get(`https://exptech.com.tw/api/v1/trem/waveform?station=${_stations.value}&start=${convertDate(_start.value).getTime()}&end=${convertDate(_end.value).getTime()}`)
-                .then((res) => {
-                    console.log(res.data);
-                    file(res.data);
-                }).catch((err) => {
-                    console.error(err);
+            Network.disabled = true;
+
+            const data = {
+                start: _start.value,
+                end: _end.value,
+                id: _stations.value,
+            }
+
+            fetch("http://raw.exptech.com.tw:25003/api/v1/trem/wave", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            }).then(res => {
+                return res.json();
+            }).then(data => {
+                if (data.success) {
+                    file(data.msg);
+                    console.log('Success');
+                } else {
                     exit();
-                    const res = err.request.response;
+                    const res = data.msg;
                     if (res == "End Time Error") alert("結束時間 錯誤!");
                     else if (res == "Can Not Found File") alert("起始時間 錯誤!");
                     else if (res == "Unknown Error, please report to the Developer (data-waveform)") alert("未知錯誤!");
-                    else if (res == "Can Not Found File") alert("起始時間 錯誤!");
                     else if (res == "Time Too Long") alert("時間段過長!");
                     else if (res == "Time Error") alert("時間 錯誤!");
-                })
+                    console.log(`Error: ${res}`);
+                }
+            }).catch(err => {
+                console.log("Error: ", err.message);
+                exit();
+            });
         }
 
-        function convertDate(date) {
-            const arr = date.split(/[- :]/);
-            return new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const day = date.getDate().toString().padStart(2, "0");
+            const hours = date.getHours().toString().padStart(2, "0");
+            const minutes = date.getMinutes().toString().padStart(2, "0");
+            const seconds = date.getSeconds().toString().padStart(2, "0");
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
         function file(file) {
             axios({
-                url: `https://api.exptech.com.tw/file/Download/${file}.zip`,
-                method: 'GET',
-                responseType: 'blob'
+                url: `https://api.exptech.com.tw/file/download/${file}.zip`,
+                method: "GET",
+                responseType: "blob",
             }).then((res) => {
-                const link = document.createElement('a');
+                const link = document.createElement("a");
                 link.href = window.URL.createObjectURL(new Blob([res.data]));
-                link.setAttribute('download', `${_stations.value}_${_start.value}_${_end.value}.zip`);
+                link.setAttribute("download", `${file}.zip`);
                 document.body.appendChild(link);
                 link.click();
                 exit();
             }).catch((err) => {
-                console.error(err);
+                console.log(err);
                 exit();
                 alert("下載 錯誤!");
-            })
+            });
         }
 
         function exit() {
@@ -253,6 +277,7 @@
             _start.disabled = false;
             _end.disabled = false;
             _button.disabled = false;
+            Network.disabled = false;
         }
     </script>
 </body>
