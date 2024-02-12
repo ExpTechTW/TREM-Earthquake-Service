@@ -46,7 +46,7 @@
         }
 
         tbody:has(>tr:hover)>tr:not(:hover) {
-            opacity: 0.4;
+            opacity: 0.1;
         }
     </style>
     <table>
@@ -55,11 +55,14 @@
         </caption>
         <thead>
             <tr>
-                <th scope="col">No.</th>
-                <th scope="col">EventID</th>
-                <th scope="col">發表單位</th>
-                <th scope="col">報數</th>
+                <th scope="col" rowspan="2">No.</th>
+                <th scope="col" rowspan="2">EventID</th>
+                <th scope="col" rowspan="2">發表單位</th>
+                <th scope="col" rowspan="2">報數</th>
 
+                <th scope="col" colspan="10">震源・EEW資訊</th>
+            </tr>
+            <tr>
                 <th scope="col">檢知時刻</th>
                 <th scope="col">發生時刻</th>
                 <th scope="col">震央地名</th>
