@@ -17,6 +17,7 @@
             font-family: sans-serif;
             font-size: 14px;
             letter-spacing: 1px;
+            justify-content: center;
         }
 
         caption {
@@ -188,6 +189,9 @@
         </table>
         <hr>
         <a style="padding: 3px;font-weight: 900;font-size: 18px;">測站列表</a>
+        <div style="color: red;padding: 3px;font-weight: 500;">
+            <a style="font-size: 18px;">下方表格為 TREM 系統 <b>自動觀測結果</b> 未經人為檢視確認 僅供參考</a>
+        </div>
         <table>
             <caption>Taiwan Real-time Earthquake Monitoring｜2024｜ExpTech Studio</caption>
             <thead>
@@ -195,11 +199,18 @@
                     <th scope="col" colspan="18">TREM 測站紀錄數據</th>
                 </tr>
                 <tr>
-                    <th scope="col" rowspan="2">ID</th>
-                    <th scope="col" rowspan="2">Net</th>
-                    <th scope="col" rowspan="2">地名</th>
+                    <th scope="col" rowspan="3">ID</th>
+                    <th scope="col" rowspan="3">Net</th>
+                    <th scope="col" rowspan="3">地名</th>
 
                     <th scope="col" colspan="15">紀錄數據</th>
+                </tr>
+                <tr>
+                    <th scope="col" colspan="3">加速度</th>
+                    <th scope="col" colspan="3">速度</th>
+                    <th scope="col" colspan="6">最大值</th>
+                    <th scope="col" colspan="2">時間</th>
+                    <th scope="col" colspan="1">檔案</th>
                 </tr>
                 <tr>
                     <th scope="col">加速度EW</th>
@@ -219,7 +230,7 @@
                     <th scope="col">Zip</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="station-table">
             </tbody>
         </table>
     </div>
@@ -227,20 +238,21 @@
     <script>
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        params.id = 1707782292529;
-        console.log(params.id);
 
         let eq_data = [];
         let trem_data = [];
+        let station_info = {};
+        let region = {};
 
         start();
 
         async function start() {
+            await fetchStationInfo();
             await fetchEqData();
+            await fetchRegionInfo();
             await fetchTREMData();
 
             const trem = searchTrem(params.id);
-            console.log(trem);
 
             let eq = null;
 
@@ -280,6 +292,7 @@
             let i = 1;
             let rts_alert = false;
             let Alarm = false;
+            let Cancel = false;
             for (const eew of trem_eew) {
                 const box = document.createElement("tr");
 
@@ -318,7 +331,7 @@
                 const alarm = document.createElement("td");
                 alarm.textContent = (eew.eq.max > 4) ? "TRUE" : "";
                 const dist = document.createElement("td");
-                dist.textContent = distance(eew.eq.lat, eew.eq.lon)(eq.lat, eq.lon).toFixed(1);
+                dist.textContent = (eq) ? distance(eew.eq.lat, eew.eq.lon)(eq.lat, eq.lon).toFixed(1) : "未知";
 
                 box.appendChild(index);
                 box.appendChild(send_time);
@@ -363,7 +376,7 @@
                     alert_box.append(alert_flag);
                     document.getElementById("eew-table").appendChild(alert_box);
                 }
-                if (!Alarm && eew.eq.max > 4) {
+                if (!Alarm && eew.status == 1) {
                     Alarm = true;
                     const alert_box = document.createElement("tr");
                     const alert_flag = document.createElement("td");
@@ -386,9 +399,110 @@
                     alert_box.append(alert_flag);
                     document.getElementById("eew-table").appendChild(alert_box);
                 }
+                if (!Cancel && eew.status == 3) {
+                    Alarm = true;
+                    const alert_box = document.createElement("tr");
+                    const alert_flag = document.createElement("td");
+                    alert_flag.textContent = `取消`;
+                    alert_flag.style.fontWeight = "900";
+                    alert_flag.colSpan = 13;
+                    const alert_index = document.createElement("td");
+                    alert_index.textContent = "〃";
+                    const alert_send_time = document.createElement("td");
+                    alert_send_time.textContent = formatTime(eew.time);
+                    const alert_after_eq_time = document.createElement("td");
+                    alert_after_eq_time.textContent = (eq) ? Math.round((eew.time - eq.time) / 1000) : "未知";
+                    const alert_after_time = document.createElement("td");
+                    const num = Math.round((eew.time - Number(trem.ID)) / 1000);
+                    alert_after_time.textContent = (num > 0) ? num : 0;
+                    alert_box.append(alert_index);
+                    alert_box.append(alert_send_time);
+                    alert_box.append(alert_after_time);
+                    alert_box.append(alert_after_eq_time);
+                    alert_box.append(alert_flag);
+                    document.getElementById("eew-table").appendChild(alert_box);
+                }
             }
 
-            console.log(trem_eew);
+            fetch("https://api.exptech.com.tw/api/v1/trem/info", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ list: JSON.parse(trem.List) }),
+            })
+                .then(ans => ans.json())
+                .then(ans => {
+                    for (const station of ans) {
+                        if (!station_info[station.id]) continue;
+                        const box = document.createElement("tr");
+
+                        const station_loc = station_info[station.id].info.at(-1);
+
+                        const id = document.createElement("td");
+                        id.textContent = station.id;
+                        const net = document.createElement("td");
+                        net.textContent = station_info[station.id].net;
+                        const loc = document.createElement("td");
+                        loc.textContent = searchLocFromCode(station_loc.code);
+                        const ax = document.createElement("td");
+                        ax.textContent = station.ax;
+                        const ay = document.createElement("td");
+                        ay.textContent = station.ay;
+                        const az = document.createElement("td");
+                        az.textContent = station.az;
+                        const vx = document.createElement("td");
+                        vx.textContent = station.vx;
+                        const vy = document.createElement("td");
+                        vy.textContent = station.vy;
+                        const vz = document.createElement("td");
+                        vz.textContent = station.vz;
+                        const pga = document.createElement("td");
+                        pga.textContent = station.pga;
+                        const pgv = document.createElement("td");
+                        pgv.textContent = station.pgv;
+                        const i = document.createElement("td");
+                        i.textContent = station.i;
+                        const I = document.createElement("td");
+                        const intensity = intensity_float_to_int(station.i);
+                        I.textContent = int_to_intensity(intensity);
+                        I.className = `intensity-${intensity}`;
+                        const sva = document.createElement("td");
+                        sva.textContent = station.sva;
+                        const lpgm = document.createElement("td");
+                        lpgm.textContent = station.lpgm;
+                        if (station.lpgm) lpgm.className = `lpgm-${station.lpgm}`;
+                        const start = document.createElement("td");
+                        start.textContent = station.start;
+                        const end = document.createElement("td");
+                        end.textContent = station.end;
+                        const zip = document.createElement("td");
+                        const link = document.createElement("a");
+                        link.href = `https://api.exptech.com.tw/file/trem_report/${station.ID}.zip`;
+                        link.target = "_blank";
+                        link.textContent = "zip";
+                        zip.append(link);
+
+                        box.appendChild(id);
+                        box.appendChild(net);
+                        box.appendChild(loc);
+                        box.appendChild(ax);
+                        box.appendChild(ay);
+                        box.appendChild(az);
+                        box.appendChild(vx);
+                        box.appendChild(vy);
+                        box.appendChild(vz);
+                        box.appendChild(pga);
+                        box.appendChild(pgv);
+                        box.appendChild(i);
+                        box.appendChild(I);
+                        box.appendChild(sva);
+                        box.appendChild(lpgm);
+                        box.appendChild(start);
+                        box.appendChild(end);
+                        box.appendChild(zip);
+                        document.getElementById("station-table").appendChild(box);
+                    }
+                })
+                .catch(err => console.log(err));
         }
 
         function searchTrem(id) {
@@ -401,6 +515,15 @@
             for (const eq of eq_data) {
                 if (eq.id == id) return eq;
             }
+        }
+
+        function searchLocFromCode(code) {
+            for (const city of Object.keys(region)) {
+                for (const town of Object.keys(region[city])) {
+                    if (region[city][town].code == code) return `${city}${town}`;
+                }
+            }
+            return "未知區域";
         }
 
         async function fetchEqData() {
@@ -416,6 +539,24 @@
             try {
                 const res = await fetch(`https://api.exptech.com.tw/api/v1/trem/list?key=${params.key}`);
                 trem_data = await res.json();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        async function fetchStationInfo() {
+            try {
+                const res = await fetch("https://raw.githubusercontent.com/ExpTechTW/API/master/resource/station.json");
+                station_info = await res.json();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        async function fetchRegionInfo() {
+            try {
+                const res = await fetch("https://raw.githubusercontent.com/ExpTechTW/API/master/resource/region.json");
+                region = await res.json();
             } catch (err) {
                 console.log(err);
             }
@@ -460,6 +601,10 @@
                 const cos_latB = Math.cos(Math.atan(Math.tan(latB)));
                 return Math.acos(sin_latA * sin_latB + cos_latA * cos_latB * Math.cos(lngA - lngB)) * 6371.008;
             };
+        }
+
+        function intensity_float_to_int(float) {
+            return (float < 0) ? 0 : (float < 4.5) ? Math.round(float) : (float < 5) ? 5 : (float < 5.5) ? 6 : (float < 6) ? 7 : (float < 6.5) ? 8 : 9;
         }
     </script>
 </body>
