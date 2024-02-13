@@ -200,8 +200,8 @@
                 AI.textContent = (eq) ? int_to_intensity(eq.int) : "未知";
                 if (eq) AI.className = `intensity-${eq.int}`;
                 const lpgm = document.createElement("td");
-                lpgm.textContent = (trem.Lpgm) ? trem.Lpgm : "調查中...";
-                if (trem.Lpgm) lpgm.className = `lpgm-${trem.Lpgm}`;
+                lpgm.textContent = (trem.Lpgm != null) ? trem.Lpgm : "調查中...";
+                if (trem.Lpgm != null) lpgm.className = `lpgm-${trem.Lpgm}`;
                 const alarm = document.createElement("td");
                 alarm.textContent = (trem.Alarm) ? "TRUE" : "";
 
