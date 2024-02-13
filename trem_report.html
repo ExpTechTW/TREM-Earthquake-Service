@@ -169,7 +169,7 @@
                 const index = document.createElement("td");
                 index.textContent = i;
                 const link = document.createElement("a")
-                link.href = trem.ID;
+                link.href = `https://api.exptech.com.tw/file/trem_info.html?id=${trem.ID}`;
                 link.textContent = formatTime(Number(trem.ID)).replaceAll("/", "").replaceAll(":", "").replace(" ", "");
                 const id = document.createElement("td");
                 id.append(link);
