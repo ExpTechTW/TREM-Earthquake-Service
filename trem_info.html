@@ -424,25 +424,45 @@
                 }
             }
 
+            const station_list = JSON.parse(trem.List);
+
             fetch("https://api.exptech.com.tw/api/v1/trem/info", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ list: JSON.parse(trem.List) }),
+                body: JSON.stringify({ list: station_list }),
             })
                 .then(ans => ans.json())
                 .then(ans => {
-                    for (const station of ans) {
-                        if (!station_info[station.id]) continue;
+                    for (const ID of station_list) {
+                        const station = searechStationInfo(ans, ID);
+
+                        const station_id = ID.split("-")[1];
+
+                        if (!station_info[station_id]) continue;
                         const box = document.createElement("tr");
 
-                        const station_loc = station_info[station.id].info.at(-1);
+                        const station_loc = station_info[station_id].info.at(-1);
 
                         const id = document.createElement("td");
-                        id.textContent = station.id;
+                        id.textContent = station_id;
                         const net = document.createElement("td");
-                        net.textContent = station_info[station.id].net;
+                        net.textContent = station_info[station_id].net;
                         const loc = document.createElement("td");
                         loc.textContent = searchLocFromCode(station_loc.code);
+
+                        box.appendChild(id);
+                        box.appendChild(net);
+                        box.appendChild(loc);
+
+                        if (!station) {
+                            const investigate = document.createElement("td");
+                            investigate.textContent = "調查中...";
+                            investigate.colSpan = 15;
+                            box.appendChild(investigate);
+                            document.getElementById("station-table").appendChild(box);
+                            continue;
+                        }
+
                         const ax = document.createElement("td");
                         ax.textContent = station.ax;
                         const ay = document.createElement("td");
@@ -476,14 +496,11 @@
                         end.textContent = station.end;
                         const zip = document.createElement("td");
                         const link = document.createElement("a");
-                        link.href = `https://api.exptech.com.tw/file/trem_report/${station.ID}.zip`;
+                        link.href = `https://api.exptech.com.tw/file/trem_report/${station_id}.zip`;
                         link.target = "_blank";
                         link.textContent = "zip";
                         zip.append(link);
 
-                        box.appendChild(id);
-                        box.appendChild(net);
-                        box.appendChild(loc);
                         box.appendChild(ax);
                         box.appendChild(ay);
                         box.appendChild(az);
@@ -501,8 +518,16 @@
                         box.appendChild(zip);
                         document.getElementById("station-table").appendChild(box);
                     }
+                    console.log(ans)
                 })
                 .catch(err => console.log(err));
+        }
+
+        function searechStationInfo(ans, id) {
+            for (const station of ans) {
+                if (station.ID == id) return station;
+            }
+            return null;
         }
 
         function searchTrem(id) {
