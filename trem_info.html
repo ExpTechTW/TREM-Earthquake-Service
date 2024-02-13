@@ -15,7 +15,7 @@
             border-collapse: collapse;
             border: 2px solid rgb(140 140 140);
             font-family: sans-serif;
-            font-size: 0.8rem;
+            font-size: 14px;
             letter-spacing: 1px;
         }
 
@@ -48,10 +48,75 @@
         tbody:has(>tr:hover)>tr:not(:hover) {
             opacity: 0.1;
         }
+
+        .intensity-1 {
+            color: white;
+            background-color: #003264;
+        }
+
+        .intensity-2 {
+            color: white;
+            background-color: #0064C8;
+        }
+
+        .intensity-3 {
+            color: white;
+            background-color: #1E9632;
+        }
+
+        .intensity-4 {
+            color: black;
+            background-color: #FFC800;
+        }
+
+        .intensity-5 {
+            color: black;
+            background-color: #FF9600;
+        }
+
+        .intensity-6 {
+            color: black;
+            background-color: #FF6400;
+        }
+
+        .intensity-7 {
+            color: white;
+            background-color: #FF0000;
+        }
+
+        .intensity-8 {
+            color: white;
+            background-color: #C00000;
+        }
+
+        .intensity-9 {
+            color: white;
+            background-color: #9600C8;
+        }
+
+        .lpgm-1 {
+            color: white;
+            background-color: #0041ff;
+        }
+
+        .lpgm-2 {
+            color: #333333;
+            background-color: #ffe600;
+        }
+
+        .lpgm-3 {
+            color: white;
+            background-color: #ff2800;
+        }
+
+        .lpgm-4 {
+            color: white;
+            background-color: #a50021;
+        }
     </style>
     <div>
-        <a href="">返回</a>
-        <table>
+        <a href="https://api.exptech.com.tw/file/trem_report.html">返回</a>
+        <table id="cwa-table" style="display: none;">
             <thead>
                 <tr>
                     <th scope="col" colspan="7">CWA地震報告</th>
@@ -68,6 +133,59 @@
             </thead>
             <tbody>
                 <tr>
+                    <td id="cwa-time"></td>
+                    <td id="cwa-loc"></td>
+                    <td id="cwa-lat"></td>
+                    <td id="cwa-lon"></td>
+                    <td id="cwa-depth"></td>
+                    <td id="cwa-mag"></td>
+                    <td id="cwa-max"></td>
+                </tr>
+            </tbody>
+        </table>
+        <a id="cwa-link" style="display: none;">CWA地震報告</a>
+        <hr>
+        <div style="color: red;padding: 3px;font-weight: 900;">
+            <a style="font-size: 25px;">僅供參考 實際結果請依 中央氣象署 發布之內容為準</a><br>
+            <a style="font-size: 18px;">下方表格中 若未特別註記 資料來源均為 TREM</a>
+        </div>
+        <div style="padding: 3px;">
+            <a id="EventID"></a><br>
+            <a id="Source"></a><br>
+            <a id="Alert_time"></a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col" colspan="14">TREM EEW</th>
+                </tr>
+                <tr>
+                    <th scope="col" rowspan="2">No.</th>
+                    <th scope="col" rowspan="2">發表時刻</th>
+                    <th scope="col" rowspan="2">檢知經過秒數</th>
+
+                    <th scope="col" colspan="11">震源・EEW資訊</th>
+                </tr>
+                <tr>
+                    <th scope="col">發生時刻</th>
+                    <th scope="col">震央地名</th>
+                    <th scope="col">北緯</th>
+                    <th scope="col">東經</th>
+                    <th scope="col">深度</th>
+                    <th scope="col">規模</th>
+                    <th scope="col">預估最大震度</th>
+                    <th scope="col">RTS</th>
+                    <th scope="col">方法</th>
+                    <th scope="col">原因</th>
+                    <th scope="col">警報狀態</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>2024/02/13 03:03:0</td>
+                    <td>23</td>
+
                     <td>2024/02/13 03:03:03</td>
                     <td>花蓮縣萬榮鄉</td>
                     <td>23.46</td>
@@ -75,16 +193,49 @@
                     <td>10km</td>
                     <td>M 5.7</td>
                     <td>5弱</td>
+                    <td></td>
+                    <td>NSSPE</td>
+                    <td>3</td>
+                    <td>TRUE</td>
+                </tr>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>2024/02/13 03:03:0</td>
+                    <td>23</td>
+
+                    <td>2024/02/13 03:03:03</td>
+                    <td>花蓮縣萬榮鄉</td>
+                    <td>23.46</td>
+                    <td>121.36</td>
+                    <td>10km</td>
+                    <td>M 5.7</td>
+                    <td>5弱</td>
+                    <td></td>
+                    <td>NSSPE</td>
+                    <td>3</td>
+                    <td>TRUE</td>
+                </tr>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>2024/02/13 03:03:0</td>
+                    <td>23</td>
+
+                    <td>2024/02/13 03:03:03</td>
+                    <td>花蓮縣萬榮鄉</td>
+                    <td>23.46</td>
+                    <td>121.36</td>
+                    <td>10km</td>
+                    <td>M 5.7</td>
+                    <td>5弱</td>
+                    <td></td>
+                    <td>NSSPE</td>
+                    <td>3</td>
+                    <td>TRUE</td>
                 </tr>
             </tbody>
         </table>
-        <a href="">CWA地震報告</a>
         <hr>
-        <div>
-            <a>EventID: 123</a><br>
-            <a>發表單位: 123</a><br>
-            <a>檢知時刻: 123</a>
-        </div>
+        <a style="padding: 3px;font-weight: 900;font-size: 18px;">測站列表</a>
         <table>
             <caption>Taiwan Real-time Earthquake Monitoring｜2024｜ExpTech Studio</caption>
             <thead>
@@ -167,6 +318,107 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        params.id = 1707782292529;
+        console.log(params.id);
+
+        let eq_data = [];
+        let trem_data = [];
+
+        start();
+
+        async function start() {
+            await fetchEqData();
+            await fetchTREMData();
+
+            const trem = searchTrem(params.id);
+            console.log(trem);
+
+            if (trem.Cwa_id) {
+                document.getElementById("cwa-table").style.display = "";
+                const link = document.getElementById("cwa-link");
+                link.style.display = "";
+                const cwa_ids = trem.Cwa_id.split("-");
+                link.href = `https://www.cwa.gov.tw/V8/C/E/EQ/EQ${cwa_ids[0]}-${cwa_ids[2]}-${cwa_ids[3]}.html`;
+                link.target = "_blank";
+
+                const eq = searchEq(trem.Cwa_id);
+
+                let loc_str = "未知區域";
+
+                const match = eq.loc.match(/\(位於(.*?)\)/);
+
+                if (match && match[1]) loc_str = match[1].trim();
+
+                document.getElementById("cwa-time").textContent = formatTime(eq.time);
+                document.getElementById("cwa-loc").textContent = loc_str;
+                document.getElementById("cwa-lat").textContent = eq.lat;
+                document.getElementById("cwa-lon").textContent = eq.lon;
+                document.getElementById("cwa-depth").textContent = `${eq.depth}km`;
+                document.getElementById("cwa-mag").textContent = `M ${eq.mag.toFixed(1)}`;
+                const max = document.getElementById("cwa-max");
+                max.textContent = int_to_intensity(eq.int);
+                max.className = `intensity-${eq.int}`;
+            }
+
+            document.getElementById("EventID").textContent = `EventID:  ${formatTime(Number(trem.ID)).replaceAll("/", "").replaceAll(":", "").replace(" ", "")}`;
+            document.getElementById("Source").textContent=`發表單位:    TREM(${trem.Source})`;
+            document.getElementById("Alert_time").textContent=`檢知時刻:    ${formatTime(Number(trem.ID))}`;
+
+            
+        }
+
+        function searchTrem(id) {
+            for (const trem of trem_data) {
+                if (trem.ID == id) return trem;
+            }
+        }
+
+        function searchEq(id) {
+            for (const eq of eq_data) {
+                if (eq.id == id) return eq;
+            }
+        }
+
+        async function fetchEqData() {
+            try {
+                const res = await fetch(`https://lb-${Math.ceil(Math.random() * 4)}.exptech.com.tw/api/v2/eq/report?limit=50&key=${params.key}`);
+                eq_data = await res.json();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        async function fetchTREMData() {
+            try {
+                const res = await fetch(`https://api.exptech.com.tw/api/v1/trem/list?key=${params.key}`);
+                trem_data = await res.json();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const day = date.getDate().toString().padStart(2, "0");
+            const hours = date.getHours().toString().padStart(2, "0");
+            const minutes = date.getMinutes().toString().padStart(2, "0");
+            const seconds = date.getSeconds().toString().padStart(2, "0");
+
+            return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const intensity_list = ["0", "1", "2", "3", "4", "5弱", "5強", "6弱", "6強", "7"];
+
+        function int_to_intensity(int) {
+            return intensity_list[int];
+        }
+    </script>
 </body>
 
 </html>

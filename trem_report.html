@@ -115,18 +115,23 @@
         }
     </style>
     <div>
-        <a style="color: red;padding: 3px;font-weight: 900;font-size: 25px;">僅供參考 實際結果請依 中央氣象署 發布之內容為準</a><br>
-        <a style="color: red;padding: 3px;font-weight: 900;font-size: 18px;">表格中 若未特別註記 資料來源均為 TREM</a>
+        <div style="color: red;padding: 3px;font-weight: 900;">
+            <a style="font-size: 25px;">僅供參考 實際結果請依 中央氣象署 發布之內容為準</a><br>
+            <a style="font-size: 18px;">下方表格中 若未特別註記 資料來源均為 TREM</a>
+        </div>
         <table>
             <caption>Taiwan Real-time Earthquake Monitoring｜2024｜ExpTech Studio</caption>
             <thead>
+                <tr>
+                    <th scope="col" colspan="15">TREM EEW</th>
+                </tr>
                 <tr>
                     <th scope="col" rowspan="2">No.</th>
                     <th scope="col" rowspan="2">EventID</th>
                     <th scope="col" rowspan="2">發表單位</th>
                     <th scope="col" rowspan="2">報數</th>
 
-                    <th scope="col" colspan="11">震源・TREM EEW資訊</th>
+                    <th scope="col" colspan="11">震源・EEW資訊</th>
                 </tr>
                 <tr>
                     <th scope="col">檢知時刻</th>
@@ -150,13 +155,14 @@
         let eq_data = [];
         let trem_data = [];
 
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+
         start();
 
         async function start() {
             await fetchEqData();
             await fetchTREMData();
-
-            console.log(trem_data)
 
             let i = 1;
             for (const trem of trem_data) {
@@ -169,7 +175,8 @@
                 const index = document.createElement("td");
                 index.textContent = i;
                 const link = document.createElement("a")
-                link.href = `https://api.exptech.com.tw/file/trem_info.html?id=${trem.ID}`;
+                link.href = `https://api.exptech.com.tw/file/trem_info.html?id=${trem.ID}&key=${params.key}`;
+                link.target = "_blank";
                 link.textContent = formatTime(Number(trem.ID)).replaceAll("/", "").replaceAll(":", "").replace(" ", "");
                 const id = document.createElement("td");
                 id.append(link);
@@ -234,7 +241,7 @@
 
         async function fetchEqData() {
             try {
-                const res = await fetch(`https://lb-${Math.ceil(Math.random() * 4)}.exptech.com.tw/api/v2/eq/report?limit=50`);
+                const res = await fetch(`https://lb-${Math.ceil(Math.random() * 4)}.exptech.com.tw/api/v2/eq/report?limit=50&key=${params.key}`);
                 eq_data = await res.json();
             } catch (err) {
                 console.log(err);
@@ -243,7 +250,7 @@
 
         async function fetchTREMData() {
             try {
-                const res = await fetch(`https://api.exptech.com.tw/api/v1/trem/list`);
+                const res = await fetch(`https://api.exptech.com.tw/api/v1/trem/list?key=${params.key}`);
                 trem_data = await res.json();
             } catch (err) {
                 console.log(err);
