@@ -46,7 +46,7 @@
         }
 
         tbody:has(>tr:hover)>tr:not(:hover) {
-            opacity: 0.1;
+            opacity: 0.6;
         }
 
         .intensity-1 {
@@ -147,7 +147,7 @@
         <hr>
         <div style="color: red;padding: 3px;font-weight: 900;">
             <a style="font-size: 25px;">僅供參考 實際結果請依 中央氣象署 發布之內容為準</a><br>
-            <a style="font-size: 18px;">下方表格中 若未特別註記 資料來源均為 TREM</a>
+            <a style="font-size: 18px;">下方表格中 資料來源均為 TREM !!!</a>
         </div>
         <div style="padding: 3px;">
             <a id="EventID"></a><br>
@@ -157,14 +157,15 @@
         <table>
             <thead>
                 <tr>
-                    <th scope="col" colspan="14">TREM EEW</th>
+                    <th scope="col" colspan="17">TREM EEW</th>
                 </tr>
                 <tr>
                     <th scope="col" rowspan="2">No.</th>
                     <th scope="col" rowspan="2">發表時刻</th>
                     <th scope="col" rowspan="2">檢知經過秒數</th>
+                    <th scope="col" rowspan="2">震後秒數</th>
 
-                    <th scope="col" colspan="11">震源・EEW資訊</th>
+                    <th scope="col" colspan="13">震源・EEW資訊</th>
                 </tr>
                 <tr>
                     <th scope="col">發生時刻</th>
@@ -177,61 +178,12 @@
                     <th scope="col">RTS</th>
                     <th scope="col">方法</th>
                     <th scope="col">原因</th>
+                    <th scope="col">觸發</th>
+                    <th scope="col">誤差△(km)</th>
                     <th scope="col">警報狀態</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2024/02/13 03:03:0</td>
-                    <td>23</td>
-
-                    <td>2024/02/13 03:03:03</td>
-                    <td>花蓮縣萬榮鄉</td>
-                    <td>23.46</td>
-                    <td>121.36</td>
-                    <td>10km</td>
-                    <td>M 5.7</td>
-                    <td>5弱</td>
-                    <td></td>
-                    <td>NSSPE</td>
-                    <td>3</td>
-                    <td>TRUE</td>
-                </tr>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2024/02/13 03:03:0</td>
-                    <td>23</td>
-
-                    <td>2024/02/13 03:03:03</td>
-                    <td>花蓮縣萬榮鄉</td>
-                    <td>23.46</td>
-                    <td>121.36</td>
-                    <td>10km</td>
-                    <td>M 5.7</td>
-                    <td>5弱</td>
-                    <td></td>
-                    <td>NSSPE</td>
-                    <td>3</td>
-                    <td>TRUE</td>
-                </tr>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2024/02/13 03:03:0</td>
-                    <td>23</td>
-
-                    <td>2024/02/13 03:03:03</td>
-                    <td>花蓮縣萬榮鄉</td>
-                    <td>23.46</td>
-                    <td>121.36</td>
-                    <td>10km</td>
-                    <td>M 5.7</td>
-                    <td>5弱</td>
-                    <td></td>
-                    <td>NSSPE</td>
-                    <td>3</td>
-                    <td>TRUE</td>
-                </tr>
+            <tbody id="eew-table">
             </tbody>
         </table>
         <hr>
@@ -264,57 +216,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2024/02/13 03:03:0</td>
-                    <td>23</td>
-
-                    <td>2024/02/13 03:03:03</td>
-                    <td>花蓮縣萬榮鄉</td>
-                    <td>23.46</td>
-                    <td>121.36</td>
-                    <td>10km</td>
-                    <td>M 5.7</td>
-                    <td>5弱</td>
-                    <td></td>
-                    <td>NSSPE</td>
-                    <td>3</td>
-                    <td>TRUE</td>
-                </tr>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2024/02/13 03:03:0</td>
-                    <td>23</td>
-
-                    <td>2024/02/13 03:03:03</td>
-                    <td>花蓮縣萬榮鄉</td>
-                    <td>23.46</td>
-                    <td>121.36</td>
-                    <td>10km</td>
-                    <td>M 5.7</td>
-                    <td>5弱</td>
-                    <td></td>
-                    <td>NSSPE</td>
-                    <td>3</td>
-                    <td>TRUE</td>
-                </tr>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>2024/02/13 03:03:0</td>
-                    <td>23</td>
-
-                    <td>2024/02/13 03:03:03</td>
-                    <td>花蓮縣萬榮鄉</td>
-                    <td>23.46</td>
-                    <td>121.36</td>
-                    <td>10km</td>
-                    <td>M 5.7</td>
-                    <td>5弱</td>
-                    <td></td>
-                    <td>NSSPE</td>
-                    <td>3</td>
-                    <td>TRUE</td>
-                </tr>
             </tbody>
         </table>
     </div>
@@ -337,6 +238,8 @@
             const trem = searchTrem(params.id);
             console.log(trem);
 
+            let eq = null;
+
             if (trem.Cwa_id) {
                 document.getElementById("cwa-table").style.display = "";
                 const link = document.getElementById("cwa-link");
@@ -345,7 +248,7 @@
                 link.href = `https://www.cwa.gov.tw/V8/C/E/EQ/EQ${cwa_ids[0]}-${cwa_ids[2]}-${cwa_ids[3]}.html`;
                 link.target = "_blank";
 
-                const eq = searchEq(trem.Cwa_id);
+                eq = searchEq(trem.Cwa_id);
 
                 let loc_str = "未知區域";
 
@@ -365,10 +268,123 @@
             }
 
             document.getElementById("EventID").textContent = `EventID:  ${formatTime(Number(trem.ID)).replaceAll("/", "").replaceAll(":", "").replace(" ", "")}`;
-            document.getElementById("Source").textContent=`發表單位:    TREM(${trem.Source})`;
-            document.getElementById("Alert_time").textContent=`檢知時刻:    ${formatTime(Number(trem.ID))}`;
+            document.getElementById("Source").textContent = `發表單位:    TREM(${trem.Source})`;
+            document.getElementById("Alert_time").textContent = `檢知時刻:    ${formatTime(Number(trem.ID))}`;
 
-            
+            const trem_eew = await fetchTREMEEW(params.id);
+
+            let i = 1;
+            let rts_alert = false;
+            let Alarm = false;
+            for (const eew of trem_eew) {
+                const box = document.createElement("tr");
+
+                const index = document.createElement("td");
+                index.textContent = `${(eew.final) ? "#" : ""}${i}`;
+                const send_time = document.createElement("td");
+                send_time.textContent = formatTime(eew.time);
+                const after_eq_time = document.createElement("td");
+                after_eq_time.textContent = (eq) ? Math.round((eew.time - eq.time) / 1000) : "未知";
+                const after_time = document.createElement("td");
+                const num = Math.round((eew.time - Number(trem.ID)) / 1000);
+                after_time.textContent = (num > 0) ? num : 0;
+                const eq_time = document.createElement("td");
+                eq_time.textContent = formatTime(eew.eq.time);
+                const loc = document.createElement("td");
+                loc.textContent = eew.eq.loc;
+                const lat = document.createElement("td");
+                lat.textContent = eew.eq.lat;
+                const lon = document.createElement("td");
+                lon.textContent = eew.eq.lon;
+                const depth = document.createElement("td");
+                depth.textContent = `${eew.eq.depth}km`;
+                const mag = document.createElement("td");
+                mag.textContent = `M ${eew.eq.mag.toFixed(1)}`;
+                const max = document.createElement("td");
+                max.textContent = (eew.eq.max) ? int_to_intensity(eew.eq.max) : "不明";
+                if (eew.eq.max) max.className = `intensity-${eew.eq.max}`;
+                const rts = document.createElement("td");
+                rts.textContent = (eew.rts) ? "TRUE" : "";
+                const method = document.createElement("td");
+                method.textContent = (!eew.detail) ? "NSSPE" : "EEW";
+                const reason = document.createElement("td");
+                reason.textContent = eew.reason;
+                const trigger = document.createElement("td");
+                trigger.textContent = eew.trigger;
+                const alarm = document.createElement("td");
+                alarm.textContent = (eew.eq.max > 4) ? "TRUE" : "";
+                const dist = document.createElement("td");
+                dist.textContent = distance(eew.eq.lat, eew.eq.lon)(eq.lat, eq.lon).toFixed(1);
+
+                box.appendChild(index);
+                box.appendChild(send_time);
+                box.appendChild(after_time);
+                box.appendChild(after_eq_time);
+                box.appendChild(eq_time);
+                box.appendChild(loc);
+                box.appendChild(lat);
+                box.appendChild(lon);
+                box.appendChild(depth);
+                box.appendChild(mag);
+                box.appendChild(max);
+                box.appendChild(rts);
+                box.appendChild(method);
+                box.appendChild(reason);
+                box.appendChild(trigger);
+                box.appendChild(dist);
+                box.appendChild(alarm);
+                i++;
+                document.getElementById("eew-table").appendChild(box);
+
+                if (!rts_alert && eew.rts) {
+                    rts_alert = true;
+                    const alert_box = document.createElement("tr");
+                    const alert_flag = document.createElement("td");
+                    alert_flag.textContent = `RTS 檢知發表`;
+                    alert_flag.style.fontWeight = "900";
+                    alert_flag.colSpan = 13;
+                    const alert_index = document.createElement("td");
+                    alert_index.textContent = "〃";
+                    const alert_send_time = document.createElement("td");
+                    alert_send_time.textContent = formatTime(eew.time);
+                    const alert_after_eq_time = document.createElement("td");
+                    alert_after_eq_time.textContent = (eq) ? Math.round((eew.time - eq.time) / 1000) : "未知";
+                    const alert_after_time = document.createElement("td");
+                    const num = Math.round((eew.time - Number(trem.ID)) / 1000);
+                    alert_after_time.textContent = (num > 0) ? num : 0;
+                    alert_box.append(alert_index);
+                    alert_box.append(alert_send_time);
+                    alert_box.append(alert_after_time);
+                    alert_box.append(alert_after_eq_time);
+                    alert_box.append(alert_flag);
+                    document.getElementById("eew-table").appendChild(alert_box);
+                }
+                if (!Alarm && eew.eq.max > 4) {
+                    Alarm = true;
+                    const alert_box = document.createElement("tr");
+                    const alert_flag = document.createElement("td");
+                    alert_flag.textContent = `警報發表`;
+                    alert_flag.style.fontWeight = "900";
+                    alert_flag.colSpan = 13;
+                    const alert_index = document.createElement("td");
+                    alert_index.textContent = "〃";
+                    const alert_send_time = document.createElement("td");
+                    alert_send_time.textContent = formatTime(eew.time);
+                    const alert_after_eq_time = document.createElement("td");
+                    alert_after_eq_time.textContent = (eq) ? Math.round((eew.time - eq.time) / 1000) : "未知";
+                    const alert_after_time = document.createElement("td");
+                    const num = Math.round((eew.time - Number(trem.ID)) / 1000);
+                    alert_after_time.textContent = (num > 0) ? num : 0;
+                    alert_box.append(alert_index);
+                    alert_box.append(alert_send_time);
+                    alert_box.append(alert_after_time);
+                    alert_box.append(alert_after_eq_time);
+                    alert_box.append(alert_flag);
+                    document.getElementById("eew-table").appendChild(alert_box);
+                }
+            }
+
+            console.log(trem_eew);
         }
 
         function searchTrem(id) {
@@ -401,6 +417,15 @@
             }
         }
 
+        async function fetchTREMEEW(id) {
+            try {
+                const res = await fetch(`https://api.exptech.com.tw/api/v1/trem/report/${id}`);
+                return await res.json();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
         function formatTime(timestamp) {
             const date = new Date(timestamp);
             const year = date.getFullYear();
@@ -417,6 +442,20 @@
 
         function int_to_intensity(int) {
             return intensity_list[int];
+        }
+
+        function distance(latA, lngA) {
+            return function (latB, lngB) {
+                latA = latA * Math.PI / 180;
+                lngA = lngA * Math.PI / 180;
+                latB = latB * Math.PI / 180;
+                lngB = lngB * Math.PI / 180;
+                const sin_latA = Math.sin(Math.atan(Math.tan(latA)));
+                const sin_latB = Math.sin(Math.atan(Math.tan(latB)));
+                const cos_latA = Math.cos(Math.atan(Math.tan(latA)));
+                const cos_latB = Math.cos(Math.atan(Math.tan(latB)));
+                return Math.acos(sin_latA * sin_latB + cos_latA * cos_latB * Math.cos(lngA - lngB)) * 6371.008;
+            };
         }
     </script>
 </body>
