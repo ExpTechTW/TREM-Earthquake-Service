@@ -472,21 +472,21 @@
                         }
 
                         const ax = document.createElement("td");
-                        ax.textContent = station.ax;
+                        ax.textContent = (station_info[station_id].net == "MS-Net") ? station.ax.toFixed(4) : station.ax.toFixed(2);
                         const ay = document.createElement("td");
-                        ay.textContent = station.ay;
+                        ay.textContent = (station_info[station_id].net == "MS-Net") ? station.ay.toFixed(4) : station.ay.toFixed(2);
                         const az = document.createElement("td");
-                        az.textContent = station.az;
+                        az.textContent = (station_info[station_id].net == "MS-Net") ? station.az.toFixed(4) : station.az.toFixed(2);
                         const vx = document.createElement("td");
-                        vx.textContent = station.vx;
+                        vx.textContent = (station_info[station_id].net == "MS-Net") ? station.vx.toFixed(4) : station.vx.toFixed(2);
                         const vy = document.createElement("td");
-                        vy.textContent = station.vy;
+                        vy.textContent = (station_info[station_id].net == "MS-Net") ? station.vy.toFixed(4) : station.vy.toFixed(2);
                         const vz = document.createElement("td");
-                        vz.textContent = station.vz;
+                        vz.textContent = (station_info[station_id].net == "MS-Net") ? station.vz.toFixed(4) : station.vz.toFixed(2);
                         const pga = document.createElement("td");
-                        pga.textContent = station.pga;
+                        pga.textContent = station.pga.toFixed(2);
                         const pgv = document.createElement("td");
-                        pgv.textContent = station.pgv;
+                        pgv.textContent = station.pgv.toFixed(2);
                         const i = document.createElement("td");
                         i.textContent = station.i;
                         const I = document.createElement("td");
