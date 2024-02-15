@@ -193,7 +193,8 @@
                 const loc = document.createElement("td");
                 loc.textContent = trem.Loc;
                 const lat = document.createElement("td");
-                lat.textContent = trem.Lat;
+                lat.textContent = (trem.Mag == 1) ? "NSSPE 假設震源參數" : trem.Lat;
+                if (trem.Mag == 1) lat.colSpan = 4;
                 const lon = document.createElement("td");
                 lon.textContent = trem.Lon;
                 const depth = document.createElement("td");
@@ -220,9 +221,9 @@
                 box.append(eq_time);
                 if (!hide) box.append(loc);
                 if (!hide) box.append(lat);
-                if (!hide) box.append(lon);
-                if (!hide) box.append(depth);
-                if (!hide) box.append(mag);
+                if (!hide && trem.Mag != 1) box.append(lon);
+                if (!hide && trem.Mag != 1) box.append(depth);
+                if (!hide && trem.Mag != 1) box.append(mag);
                 if (!hide) box.append(EI);
                 if (!hide) box.append(AI);
                 if (!hide) box.append(lpgm);
