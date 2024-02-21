@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta content="TREM 即時強震觀測網" property="og:title">
     <meta content="Taiwan Real-time Earthquake Monitoring ( 臺灣即時地震監測 )" property="og:description">
-    <meta content="https://exptechtw.github.io/" property="og:url">
-    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png" property="og:image">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ExpTechTW/TREM-Earthquake-Service@master/trem.css">
+    <meta content="https://exptechtw.github.io/" property="og:url" />
+    <meta content="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/image/Icon/ExpTech.png" property="og:image" />
+    <link rel="stylesheet" href="./trem.css">
 </head>
 
 <body>
@@ -17,13 +17,14 @@
             <div class="title">TREM 強震監視器</div>
             <div style="color:#f08080">僅供參考 最終結果依 <b>中央氣象署(CWA)</b> 為準</div>
         </div>
+        <canvas id="canvas" style="display: none;"></canvas>
         <div class="container">
             <div class="map-wrapper">
                 <div class="map-container"><img
                         src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/taiwan.png"
-                        class="map-image"><img src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/rts.png" id="img"
-                        class="map-image"><img src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/int.png"
-                        class="map-image"></div>
+                        class="map-image"><img src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/rts.png"
+                        id="img" class="map-image"><img
+                        src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/int.png" class="map-image"></div>
             </div>
             <div class="control-container">
                 <div id="eew-info">
@@ -68,7 +69,7 @@
             <source src="https://cdn.jsdelivr.net/gh/ExpTechTW/API@master/resource/alert.mp3" type="audio/mpeg">
         </audio>
     </div>
-    <script src="https://api.exptech.com.tw/file/trem.js"></script>
+    <script src="./trem.js"></script>
 </body>
 
 </html>
