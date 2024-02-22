@@ -214,7 +214,7 @@
                 id: _stations.value,
             }
 
-            fetch("http://raw.exptech.com.tw:25003/api/v1/trem/wave", {
+            fetch("https://api.exptech.com.tw/api/v1/trem/wave", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
