@@ -504,7 +504,7 @@
                         end.textContent = station.end;
                         const zip = document.createElement("td");
                         const link = document.createElement("a");
-                        link.href = `https://api.exptech.com.tw/file/trem_report/${station_id}.zip`;
+                        link.href = `https://api.exptech.com.tw/file/trem_report/${station.ID}.zip`;
                         link.target = "_blank";
                         link.textContent = "zip";
                         zip.append(link);
