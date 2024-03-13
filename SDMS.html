@@ -151,8 +151,8 @@
     <script>
         const utc = new Date();
         const NOW = new Date(utc.getTime() + utc.getTimezoneOffset() * 60 * 1000 + 3600 * 8 * 1000);
-        const Now = formatTime(NOW.getTime() - 310000);
-        const Now1 = formatTime(NOW.getTime() - 10000);
+        const Now = formatTime(NOW.getTime() - 325000);
+        const Now1 = formatTime(NOW.getTime() - 25000);
 
         const _stations = document.getElementById("stations");
         const _button = document.getElementById("button");
@@ -227,11 +227,14 @@
                 } else {
                     exit();
                     const res = data.msg;
-                    if (res == "End Time Error") alert("結束時間 錯誤!");
-                    else if (res == "Can Not Found File") alert("起始時間 錯誤!");
-                    else if (res == "Unknown Error, please report to the Developer (data-waveform)") alert("未知錯誤!");
-                    else if (res == "Time Too Long") alert("時間段過長!");
-                    else if (res == "Time Error") alert("時間 錯誤!");
+                    if (res == "Time invalid") alert("無效時間!");
+                    else if (res == "Station info not found") alert("未發現 該測站資訊!");
+                    else if (res == "End time error") alert("結束時間 錯誤!");
+                    else if (res == "Time error") alert("起始時間 錯誤!");
+                    else if (res == "Time too long") alert("選取時間段過長!");
+                    else if (res == "Server busy") alert("伺服器繁忙 請稍後再試!");
+                    else if (res == "No data found") alert("指定條件 查無資料!");
+                    else if (res == "Failed to write file") alert("未知錯誤 請聯絡 開發人員!");
                     console.log(`Error: ${res}`);
                 }
             }).catch(err => {
