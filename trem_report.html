@@ -119,6 +119,10 @@
             <a style="font-size: 25px;">僅供參考 實際結果請依 中央氣象署 發布之內容為準</a><br>
             <a style="font-size: 18px;">下方表格中 若未特別註記 資料來源均為 TREM</a>
         </div>
+        <div>
+            <input id="checkbox" type="checkbox">
+            <a>Dev Mode</a>
+        </div>
         <table>
             <caption>Taiwan Real-time Earthquake Monitoring｜2024｜ExpTech Studio</caption>
             <thead>
@@ -157,6 +161,16 @@
 
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
+
+        const checkbox = document.getElementById("checkbox");
+        if (params.dev) checkbox.checked = true
+        checkbox.addEventListener("click", () => {
+            if (checkbox.checked) urlSearchParams.set("dev", true);
+            else urlSearchParams.delete("dev")
+            const newUrl = `${window.location.pathname}?${urlSearchParams.toString()}`;
+            history.replaceState(null, '', newUrl);
+            window.location.reload();
+        });
 
         start();
 
@@ -229,7 +243,7 @@
                 if (!hide) box.append(lpgm);
                 box.append(alarm);
 
-                document.getElementById("body").appendChild(box);
+                if (params.dev || trem.Mag != 1) document.getElementById("body").appendChild(box);
                 i++;
             }
         }
